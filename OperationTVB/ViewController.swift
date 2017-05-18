@@ -20,7 +20,10 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 	@IBOutlet weak var downloadProgressLabel: NSTextField!
 	@IBOutlet weak var downloadProgressIndicator: NSProgressIndicator!
 	
-	var episodes = [Episode]()
+	@IBOutlet var episodesArrayController: NSArrayController!
+	
+	
+	dynamic var episodes = [Episode]()
 	var saveLocation: URL? {
 		didSet {
 			downloadLocationField.stringValue = saveLocation?.path ?? ""
@@ -51,8 +54,6 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 	
 	override func viewDidLoad() {
 		super.viewDidLoad()
-		self.tableView.dataSource = self
-		self.tableView.delegate = self
 		
 		// TODO: remove this line
 		self.saveLocation = URL(fileURLWithPath: "/Volumes/Seagate Expansion/Big Data/BitTorrents/OperationTVB")
@@ -60,12 +61,11 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 	}
 	
 
-	@IBAction func loadURL(_ sender: NSButton) {
+	@IBAction func loadEpisodes(_ sender: NSButton) {
 		let url = URL(string: episodeURLField.stringValue)!
 		Episode.downloadEpisodeList(fromURL: url) { episodes in
-			self.episodes = episodes
 			DispatchQueue.main.async {
-				self.tableView.reloadData()
+				self.episodes = episodes
 			}
 		}
 	}
@@ -94,51 +94,27 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 		}
 	}
 	
-
-	// MARK: - NSTableViewDataSource
-	func numberOfRows(in tableView: NSTableView) -> Int {
-		return episodes.count
+	
+	// MARK: - Keyboard Events
+	override func keyDown(with event: NSEvent) {
+		interpretKeyEvents([event])
 	}
 	
-	func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
-		guard let columnIdentifier = tableColumn?.identifier else {
-			return nil
+	override func deleteForward(_ sender: Any?) {
+		deleteSelectedRows()
+	}
+	
+	override func deleteBackward(_ sender: Any?) {
+		deleteSelectedRows()
+	}
+	
+	private func deleteSelectedRows() {
+		if let selectedRows = episodesArrayController.selectedObjects {
+			episodesArrayController.remove(contentsOf: selectedRows)
 		}
-
-		let cell = tableView.make(withIdentifier: "defaultCell", owner: self) as! NSTableCellView
-		var stringValue = ""
-		switch columnIdentifier {
-		case "title":
-			stringValue = self.episodes[row].title
-		case "chineseTitle":
-			stringValue = self.episodes[row].chineseTitle
-		case "episodeNumber":
-			stringValue = "\(self.episodes[row].episodeNumber)"
-		case "language":
-			stringValue = self.episodes[row].language ?? ""
-		default:
-			stringValue = "unknown"
-		}
-
-		cell.textField?.stringValue = stringValue
-		return cell
 	}
 	
 	// MARK: - URLSessionDownloadDelegate
-	func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {
-		downloadingEpisode = ""
-		semaphore.signal()
-		
-		let name = downloadTask.response?.suggestedFilename ?? "HelloWorld.mp4"
-		let finalURL = self.saveLocation!.appendingPathComponent(name)
-		
-		let fileManager = FileManager.default
-		if fileManager.fileExists(atPath: finalURL.path) {
-			try! fileManager.removeItem(at: finalURL)
-		}
-		try! fileManager.moveItem(at: location, to: finalURL)
-	}
-	
 	func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didWriteData bytesWritten: Int64, totalBytesWritten: Int64, totalBytesExpectedToWrite: Int64) {
 		if let taskDescription = downloadTask.taskDescription {
 			downloadingEpisode = taskDescription
@@ -154,5 +130,27 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 			self.downloadProgressIndicator.doubleValue = Double(totalBytesWritten)
 		}
 	}
+	
+	func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {
+		downloadingEpisode = ""
+		print("\(downloadTask.taskDescription!): finished")
+		semaphore.signal()
+		
+		var filename = downloadTask.response?.suggestedFilename ?? "\(Date()).mp4"
+		if let taskDescription = downloadTask.taskDescription,
+			let episode = self.episodes.first(where: { $0.description == taskDescription })
+		{
+			let fileExtension = (filename as NSString).pathExtension
+			filename = "\(episode.preferredFilename).\(fileExtension)"
+		}
+		
+		let finalURL = self.saveLocation!.appendingPathComponent(filename)
+		let fileManager = FileManager.default
+		if fileManager.fileExists(atPath: finalURL.path) {
+			try! fileManager.removeItem(at: finalURL)
+		}
+		try! fileManager.moveItem(at: location, to: finalURL)
+	}
+
 }
 

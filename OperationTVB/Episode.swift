@@ -17,7 +17,7 @@ enum EpisodeDownloadState {
 	case failed
 }
 
-class Episode {
+class Episode : NSObject {
 	var title: String
 	var chineseTitle: String
 	var language: String?
@@ -29,11 +29,20 @@ class Episode {
 	var totalBytesWritten: Int64 = 0
 	var totalBytesExpected: Int64 = 0
 	
-	var description: String {
+	override var description: String {
 		if let language = self.language {
 			return String(format: "%@ - E%02d (%@)", title, episodeNumber, language)
 		} else {
 			return String(format: "%@ - E%02d", title, episodeNumber)
+		}
+	}
+	
+	var preferredFilename : String {
+		let language = self.language ?? "Cantonese"
+		if language == "Cantonese" {
+			return String(format: "%@ - E%02d", self.title, self.episodeNumber)
+		} else {
+			return String(format: "%@ (%@) - E%02d", self.title, language, self.episodeNumber)
 		}
 	}
 	
@@ -91,7 +100,7 @@ class Episode {
 				let episodeNumber1 = $1.episodeNumber
 				
 				if language0 != language1 {
-					return language0 < language1
+					return language0 > language1
 				} else {
 					return episodeNumber0 < episodeNumber1
 				}
@@ -167,7 +176,7 @@ class Episode {
 		URLSession.shared.dataTask(with: request) { data, response, error in
 			let document = HTMLDocument(data: data!, contentTypeHeader: nil)
 			if let downloadAnchor = document.firstNode(matchingSelector: "a", withContent: "Direct Download Link") {
-				print("\(self.description): proceeding")
+				print("\(self.description): start download")
 				let href = downloadAnchor.attributes["href"]!
 				self.loadPage4(href: href)
 			} else if self.retries < self.maxRetries {
