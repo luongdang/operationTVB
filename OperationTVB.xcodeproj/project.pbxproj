@@ -19,6 +19,7 @@
 		7E83AFD81EC92AF20052402D /* OperationTVBTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E83AFD71EC92AF20052402D /* OperationTVBTests.swift */; };
 		7E83AFE31EC92AF20052402D /* OperationTVBUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E83AFE21EC92AF20052402D /* OperationTVBUITests.swift */; };
 		7E83AFF21EC93FDD0052402D /* Episode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E83AFF11EC93FDD0052402D /* Episode.swift */; };
+		7EDFB1B91ECF8D570036AD33 /* FileManagerExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EDFB1B81ECF8D570036AD33 /* FileManagerExtension.swift */; };
 		7EE5E0551ECA6A9000B12442 /* Utility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EE5E0541ECA6A9000B12442 /* Utility.swift */; };
 /* End PBXBuildFile section */
 
@@ -59,6 +60,7 @@
 		7E83AFE21EC92AF20052402D /* OperationTVBUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationTVBUITests.swift; sourceTree = "<group>"; };
 		7E83AFE41EC92AF20052402D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7E83AFF11EC93FDD0052402D /* Episode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Episode.swift; sourceTree = "<group>"; };
+		7EDFB1B81ECF8D570036AD33 /* FileManagerExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FileManagerExtension.swift; sourceTree = "<group>"; };
 		7EE5E0541ECA6A9000B12442 /* Utility.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utility.swift; sourceTree = "<group>"; };
 		9A16C9E149766E1DEB293853 /* Pods-OperationTVB.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OperationTVB.release.xcconfig"; path = "Pods/Target Support Files/Pods-OperationTVB/Pods-OperationTVB.release.xcconfig"; sourceTree = "<group>"; };
 		B7E0558D58D0F5F4FF2594B8 /* Pods-OperationTVB.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OperationTVB.debug.xcconfig"; path = "Pods/Target Support Files/Pods-OperationTVB/Pods-OperationTVB.debug.xcconfig"; sourceTree = "<group>"; };
@@ -122,10 +124,11 @@
 			children = (
 				7E83AFC51EC92AF20052402D /* AppDelegate.swift */,
 				7E83AFF11EC93FDD0052402D /* Episode.swift */,
+				7EDFB1B81ECF8D570036AD33 /* FileManagerExtension.swift */,
 				7E10703E1ECB0AED00AF5A0E /* HTMLNodeExtension.swift */,
+				7E1070401ECB0E2E00AF5A0E /* ProgressCellView.swift */,
 				7E83AFF01EC92AFF0052402D /* Resources */,
 				7EE5E0541ECA6A9000B12442 /* Utility.swift */,
-				7E1070401ECB0E2E00AF5A0E /* ProgressCellView.swift */,
 				7E83AFC71EC92AF20052402D /* ViewController.swift */,
 			);
 			path = OperationTVB;
@@ -467,6 +470,7 @@
 			files = (
 				7E83AFC81EC92AF20052402D /* ViewController.swift in Sources */,
 				7E10703F1ECB0AED00AF5A0E /* HTMLNodeExtension.swift in Sources */,
+				7EDFB1B91ECF8D570036AD33 /* FileManagerExtension.swift in Sources */,
 				7E83AFF21EC93FDD0052402D /* Episode.swift in Sources */,
 				7E1070411ECB0E2E00AF5A0E /* ProgressCellView.swift in Sources */,
 				7EE5E0551ECA6A9000B12442 /* Utility.swift in Sources */,

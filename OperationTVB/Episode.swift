@@ -9,12 +9,23 @@
 import Foundation
 import HTMLReader
 
-enum EpisodeDownloadState {
+enum EpisodeDownloadState : Equatable {
 	case notDownloaded
-	case start
+	case scheduled
+	case starting
 	case downloading
 	case finished
-	case failed
+	case failed(error: String)
+	
+	static func == (lhs: EpisodeDownloadState, rhs: EpisodeDownloadState) -> Bool {
+		switch (lhs, rhs) {
+		case (.notDownloaded, .notDownloaded), (.scheduled, .scheduled), (.starting, .starting),
+		     (.downloading, .downloading), (.finished, finished), (.failed, .failed):
+		     return true
+		default:
+			return false
+		}
+	}
 }
 
 class Episode : NSObject {
@@ -23,11 +34,6 @@ class Episode : NSObject {
 	var language: String?
 	var episodeNumber: Int
 	var url: URL
-	var state = EpisodeDownloadState.notDownloaded
-	
-	
-	var totalBytesWritten: Int64 = 0
-	var totalBytesExpected: Int64 = 0
 	
 	override var description: String {
 		if let language = self.language {
@@ -100,7 +106,7 @@ class Episode : NSObject {
 				let episodeNumber1 = $1.episodeNumber
 				
 				if language0 != language1 {
-					return language0 > language1
+					return language0 < language1
 				} else {
 					return episodeNumber0 < episodeNumber1
 				}
@@ -121,6 +127,7 @@ class Episode : NSObject {
 		if resetRetries {
 			self.retries = 0
 		}
+		self.state = .starting
 		loadPage1()
 	}
 	
@@ -197,6 +204,64 @@ class Episode : NSObject {
 		let task = session.downloadTask(with: request)
 		task.taskDescription = self.description
 		task.resume()
+		
+		self.state = .downloading
+	}
+	
+	// MARK: - Download state
+	private let downloadProgressFormatter: NumberFormatter = {
+		var formatter = NumberFormatter()
+		formatter.numberStyle = .percent
+		formatter.maximumFractionDigits = 1
+		return formatter
+	}()
+	
+	private func stateDidChange() {
+		DispatchQueue.main.async {
+			self.willChangeValue(forKey: "stateDescription")
+			self.didChangeValue(forKey: "stateDescription")
+			
+			self.willChangeValue(forKey: "stateColor")
+			self.didChangeValue(forKey: "stateColor")
+		}
+	}
+	var state = EpisodeDownloadState.notDownloaded {
+		didSet { self.stateDidChange() }
+	}
+	var totalBytesWritten: Int64 = 0 {
+		didSet { self.stateDidChange() }
+	}
+	var totalBytesExpected: Int64 = 0 {
+		didSet { self.stateDidChange() }
+	}
+	
+	var stateDescription : String {
+		switch self.state {
+		case .notDownloaded:
+			return ""
+		case .scheduled:
+			return "Scheduled"
+		case .starting:
+			return "Starting... \(self.retries + 1)"
+		case .downloading:
+			let percentage = self.totalBytesExpected > 0 ? Double(self.totalBytesWritten) / Double(self.totalBytesExpected) : 0
+			return self.downloadProgressFormatter.string(from: NSNumber(value: percentage))!
+		case .finished:
+			return "Finished"
+		case .failed(let errorMessage):
+			return "Failed: \(errorMessage)"
+		}
+	}
+	
+	var stateColor : NSColor {
+		switch self.state {
+		case .finished:
+			return NSColor.lightGray
+		case .failed:
+			return NSColor.red
+		default:
+			return NSColor.black
+		}
 	}
 }
 

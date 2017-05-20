@@ -16,9 +16,6 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 	@IBOutlet weak var episodeURLField: NSTextField!
 	@IBOutlet weak var tableView: NSTableView!
 	@IBOutlet weak var downloadLocationField: NSTextField!
-	@IBOutlet weak var downloadingEpisodeLabel: NSTextField!
-	@IBOutlet weak var downloadProgressLabel: NSTextField!
-	@IBOutlet weak var downloadProgressIndicator: NSProgressIndicator!
 	
 	@IBOutlet var episodesArrayController: NSArrayController!
 	
@@ -27,20 +24,6 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 	var saveLocation: URL? {
 		didSet {
 			downloadLocationField.stringValue = saveLocation?.path ?? ""
-		}
-	}
-	var downloadingEpisode: String {
-		get {
-			return downloadingEpisodeLabel.stringValue
-		}
-		set {
-			DispatchQueue.main.async {
-				self.downloadingEpisodeLabel.stringValue = newValue
-				
-				self.downloadingEpisodeLabel.isHidden = newValue.isEmpty
-				self.downloadProgressLabel.isHidden = newValue.isEmpty
-				self.downloadProgressIndicator.isHidden = newValue.isEmpty
-			}
 		}
 	}
 	
@@ -54,12 +37,8 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 	
 	override func viewDidLoad() {
 		super.viewDidLoad()
-		
-		// TODO: remove this line
 		self.saveLocation = URL(fileURLWithPath: "/Volumes/Seagate Expansion/Big Data/BitTorrents/OperationTVB")
-		downloadingEpisode = ""
 	}
-	
 
 	@IBAction func loadEpisodes(_ sender: NSButton) {
 		let url = URL(string: episodeURLField.stringValue)!
@@ -78,16 +57,17 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 			guard button == NSFileHandlingPanelOKButton else {
 				return
 			}
-			self.saveLocation = panel.url
+			self.saveLocation = panel.url!
 		}
 	}
 	
 	@IBAction func download(_ sender: Any) {
-		for episode in self.episodes {
+		for episode in self.episodes where episode.state != .downloading {
 			DispatchQueue.global(qos: .background).async {
 				self.semaphore.wait()
 				
 				print("Next download: \(episode.description)")
+				episode.state = .scheduled
 				Utility.randomSleep(from: 0, to: 60)
 				episode.download(delegate: self)
 			}
@@ -114,43 +94,69 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 		}
 	}
 	
+	
 	// MARK: - URLSessionDownloadDelegate
 	func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didWriteData bytesWritten: Int64, totalBytesWritten: Int64, totalBytesExpectedToWrite: Int64) {
-		if let taskDescription = downloadTask.taskDescription {
-			downloadingEpisode = taskDescription
+		if let taskDescription = downloadTask.taskDescription,
+			let episode = self.episodes.first(where: { $0.description == taskDescription }),
+			(totalBytesWritten - episode.totalBytesWritten) > Int64(1 << 20)
+		{
+			episode.state = .downloading
+			episode.totalBytesWritten = totalBytesWritten
+			episode.totalBytesExpected = totalBytesExpectedToWrite
 		}
-
-		DispatchQueue.main.async {
-			let written = self.formatter.string(fromByteCount: totalBytesWritten)
-			let expected = self.formatter.string(fromByteCount: totalBytesExpectedToWrite)
-			
-			self.downloadProgressLabel.stringValue = "\(written) / \(expected)"
-			self.downloadProgressIndicator.minValue = 0
-			self.downloadProgressIndicator.maxValue = Double(totalBytesExpectedToWrite)
-			self.downloadProgressIndicator.doubleValue = Double(totalBytesWritten)
+	}
+	
+	func urlSession(_ session: URLSession, didBecomeInvalidWithError error: Error?) {
+		print("Session failed: \(error?.localizedDescription ?? "unknown session error")")
+	}
+	
+	func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
+		self.semaphore.signal()
+		guard let error = error else {
+			return
+		}
+		
+		if let taskDescription = task.taskDescription,
+			let episode = self.episodes.first(where: { $0.description == taskDescription })
+		{
+			episode.state = .failed(error: error.localizedDescription)
 		}
 	}
 	
 	func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {
-		downloadingEpisode = ""
 		print("\(downloadTask.taskDescription!): finished")
-		semaphore.signal()
 		
-		var filename = downloadTask.response?.suggestedFilename ?? "\(Date()).mp4"
+		let fileManager = FileManager.default
+		var folderURL = self.saveLocation!
+		var fileName = downloadTask.response?.suggestedFilename ?? "\(Date()).mp4"
+		
 		if let taskDescription = downloadTask.taskDescription,
 			let episode = self.episodes.first(where: { $0.description == taskDescription })
 		{
-			let fileExtension = (filename as NSString).pathExtension
-			filename = "\(episode.preferredFilename).\(fileExtension)"
+			// Fail the episode if the file size is too small
+			let fileAttributes = try! fileManager.attributesOfItem(atPath: location.path)
+			let fileSize = fileAttributes[FileAttributeKey.size] as! NSNumber
+			episode.state = fileSize.uint64Value < 1_000_000 ? .failed(error: "invalid movie") : .finished
+			
+			// Create a folder to hold the show
+			folderURL.appendPathComponent(episode.title)
+			if (episode.language ?? "Cantonese") != "Cantonese" {
+				folderURL.appendPathComponent("Extra")
+			}
+			
+			var isDirectory = ObjCBool(false)
+			if !(fileManager.fileExists(atPath: folderURL.path, isDirectory: &isDirectory) && isDirectory.boolValue) {
+				try! fileManager.createDirectory(at: folderURL, withIntermediateDirectories: false, attributes: [:])
+			}
+			
+			// Set the filename of the episode
+			let fileExtension = (fileName as NSString).pathExtension
+			fileName = "\(episode.preferredFilename).\(fileExtension)"
 		}
 		
-		let finalURL = self.saveLocation!.appendingPathComponent(filename)
-		let fileManager = FileManager.default
-		if fileManager.fileExists(atPath: finalURL.path) {
-			try! fileManager.removeItem(at: finalURL)
-		}
-		try! fileManager.moveItem(at: location, to: finalURL)
+		let finalURL = folderURL.appendingPathComponent(fileName)
+		try! fileManager.moveItem(at: location, to: finalURL, overwriteIfExists: true)
 	}
-
 }
 
