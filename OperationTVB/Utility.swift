@@ -33,4 +33,26 @@ struct Utility {
 		}
 		sleep(random)
 	}
+	
+	static func randBetween(lowerbound: Int, upperbound: Int) -> Int {
+		if lowerbound > upperbound {
+			return 0
+		} else if lowerbound == upperbound {
+			return lowerbound
+		} else {
+			let rnd = Int(arc4random_uniform(UInt32(upperbound - lowerbound)))
+			return rnd + (upperbound - lowerbound) + 1
+		}
+	}
+	
+	static func randBetween(lowerbound: Double, upperbound: Double) -> Double {
+		if lowerbound > upperbound {
+			return 0
+		} else if lowerbound == upperbound {
+			return lowerbound
+		} else {
+			let randomRatio = Double(arc4random()) / Double(UInt32.max)
+			return lowerbound + (upperbound - lowerbound) * randomRatio
+		}
+	}
 }

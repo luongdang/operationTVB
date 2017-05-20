@@ -19,7 +19,6 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 	
 	@IBOutlet var episodesArrayController: NSArrayController!
 	
-	
 	dynamic var episodes = [Episode]()
 	var saveLocation: URL? {
 		didSet {
@@ -33,7 +32,6 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 		return formatter
 	}()
 	
-	let semaphore = DispatchSemaphore(value: 3)
 	
 	override func viewDidLoad() {
 		super.viewDidLoad()
@@ -61,19 +59,6 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 		}
 	}
 	
-	@IBAction func download(_ sender: Any) {
-		for episode in self.episodes where episode.state != .downloading {
-			DispatchQueue.global(qos: .background).async {
-				self.semaphore.wait()
-				
-				print("Next download: \(episode.description)")
-				episode.state = .scheduled
-				Utility.randomSleep(from: 0, to: 60)
-				episode.download(delegate: self)
-			}
-		}
-	}
-	
 	
 	// MARK: - Keyboard Events
 	override func keyDown(with event: NSEvent) {
@@ -95,7 +80,27 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 	}
 	
 	
-	// MARK: - URLSessionDownloadDelegate
+	// MARK: - Download & URLSessionDownloadDelegate
+	private let semaphore = DispatchSemaphore(value: 3)
+	private let downloadQueue = DispatchQueue(label: "com.ldresearch.operationTVB.episodeDownloadQueue", qos: .background, attributes: [.concurrent])
+	
+	@IBAction func download(_ sender: Any) {
+		for (index, episode) in self.episodes.enumerated() where index < 67 && episode.state != .downloading {
+			
+			downloadQueue.async {
+				self.semaphore.wait()
+				
+				let waitTime = Utility.randBetween(lowerbound: 0.0, upperbound: 60.0)
+				print("Next download: \(episode) in \(waitTime) seconds")
+				DispatchQueue.global(qos: .background).asyncAfter(deadline: .now() + waitTime) {
+					print("\(episode): start processing")
+					episode.state = .scheduled
+					episode.download(delegate: self)
+				}
+			}
+		}
+	}
+
 	func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didWriteData bytesWritten: Int64, totalBytesWritten: Int64, totalBytesExpectedToWrite: Int64) {
 		if let taskDescription = downloadTask.taskDescription,
 			let episode = self.episodes.first(where: { $0.description == taskDescription }),
@@ -113,10 +118,9 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 	
 	func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
 		self.semaphore.signal()
-		guard let error = error else {
-			return
-		}
+		guard let error = error else { return }
 		
+		// Handling error
 		if let taskDescription = task.taskDescription,
 			let episode = self.episodes.first(where: { $0.description == taskDescription })
 		{

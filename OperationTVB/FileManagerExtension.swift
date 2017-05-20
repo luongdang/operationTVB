@@ -18,10 +18,10 @@ extension FileManager {
 		if self.fileExists(atPath: destinationURL.path, isDirectory: &destinationIsDirectory)
 			&& sourceIsDirectory.boolValue == destinationIsDirectory.boolValue
 		{
-			let _ = try self.replaceItemAt(destinationURL, withItemAt: sourceURL)
+			// let _ = try self.replaceItemAt(destinationURL, withItemAt: sourceURL)
+			try self.removeItem(at: destinationURL)
 		}
-		else {
-			try self.moveItem(at: sourceURL, to: destinationURL)
-		}
+		
+		try self.moveItem(at: sourceURL, to: destinationURL)
 	}
 }

@@ -189,8 +189,12 @@ class Episode : NSObject {
 			} else if self.retries < self.maxRetries {
 				self.retries += 1
 				print("\(self.description): retries \(self.retries)")
-				Utility.randomSleep(from: 1, to: 5)
-				self.download(delegate: self.downloadDelegate, resetRetries: false)
+				
+				let waitTime = Utility.randBetween(lowerbound: 1.0, upperbound: 5.0)
+				DispatchQueue.global(qos: .background).asyncAfter(deadline: .now() + waitTime) {
+					self.download(delegate: self.downloadDelegate, resetRetries: false)
+				}
+				
 			} else {
 				fatalError("Too many retries")
 			}
