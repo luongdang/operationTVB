@@ -9,7 +9,13 @@
 import Foundation
 import GameKit
 
-fileprivate var userAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.97 Safari/537.36 Vivaldi/1.9.818.49"
+fileprivate let userAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.97 Safari/537.36 Vivaldi/1.9.818.49"
+fileprivate let defaultDateFormatter: DateFormatter = {
+	var formatter = DateFormatter()
+	formatter.dateStyle = .none
+	formatter.timeStyle = .medium
+	return formatter
+}()
 
 struct Utility {
 	static func makeRequest(with urlString: String) -> URLRequest {
@@ -54,5 +60,14 @@ struct Utility {
 			let randomRatio = Double(arc4random()) / Double(UInt32.max)
 			return lowerbound + (upperbound - lowerbound) * randomRatio
 		}
+	}
+	
+	static func timeFromNow(offset seconds: Double, formatter: DateFormatter = defaultDateFormatter) -> String {
+		return formatter.string(from: Date().addingTimeInterval(seconds))
+	}
+	
+	static func string(_ str: String, matchRegex regexPattern: String, options: NSRegularExpression.Options = []) -> Bool {
+		let regex = try! NSRegularExpression(pattern: regexPattern, options: options)
+		return regex.firstMatch(in: str, options: [], range: NSMakeRange(0, str.utf16.count)) != nil
 	}
 }

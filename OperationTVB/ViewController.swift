@@ -19,7 +19,28 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 	
 	@IBOutlet var episodesArrayController: NSArrayController!
 	
-	dynamic var episodes = [Episode]()
+	@objc dynamic var episodes = [Episode]() {
+		didSet {
+			self.statisticsDidChange()
+		}
+	}
+	@objc dynamic var statistics : String {
+		let finishedCount = episodes.filter({ $0.state == .finished }).count
+		let totalCount = episodes.count
+		let showCount = Set(episodes.map({ $0.title })).count
+		let failedCount = episodes.filter({ $0.state == .failed(error: "") }).count
+		
+		var statisticString = "\(showCount) shows. \(totalCount) episodes."
+		if finishedCount > 0 {
+			statisticString += " \(finishedCount) finished."
+		}
+		if failedCount > 0 {
+			statisticString += " \(failedCount) failed."
+		}
+		
+		return statisticString
+	}
+	
 	var saveLocation: URL? {
 		didSet {
 			downloadLocationField.stringValue = saveLocation?.path ?? ""
@@ -35,27 +56,91 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 	
 	override func viewDidLoad() {
 		super.viewDidLoad()
-		self.saveLocation = URL(fileURLWithPath: "/Volumes/Seagate Expansion/Big Data/BitTorrents/OperationTVB")
+		self.saveLocation = URL(fileURLWithPath: "/Volumes/Macintosh HD/TVB")
 	}
-
-	@IBAction func loadEpisodes(_ sender: NSButton) {
+	
+	
+	@IBAction func addEpisodes(_ sender: NSButton) {
 		let url = URL(string: episodeURLField.stringValue)!
-		Episode.downloadEpisodeList(fromURL: url) { episodes in
+		let completionHandler = { (episodes: [Episode]) in
 			DispatchQueue.main.async {
-				self.episodes = episodes
+				let sortedEpisodes = episodes.sorted {
+					if $0.title != $1.title {
+						return $0.title < $1.title
+					} else if let language0 = $0.language, let language1 = $1.language, language0 != language1 {
+						return language0 < language1
+					} else if $0.episodeNumber != $1.episodeNumber {
+						return $0.episodeNumber < $1.episodeNumber
+					} else {
+						return false
+					}
+				}
+				
+				self.episodes.append(contentsOf: sortedEpisodes)
+				self.updateState(self)
+			}
+		}
+		
+		if Utility.string(url.lastPathComponent, matchRegex: "page-(\\d+).html") {
+			Episode.downloadEpisodeList(fromIndexPageURL: url, completionHandler: completionHandler)
+		} else {
+			Episode.downloadEpisodeList(fromURL: url, completionHandler: completionHandler)
+		}
+	}
+	
+	@IBAction func cleanUp(_ sender: Any) {
+		self.episodes = episodes.filter { $0.state != .finished }
+	}
+	
+	@IBAction func updateState(_ sender : Any) {
+		func checkEpisode(_ episode: Episode, existsAtBaseURL baseURL: URL) -> Bool {
+			var expectedURL = baseURL.appendingPathComponent(episode.preferredTitle)
+			
+			if let subfolder = episode.preferredSubfolder {
+				expectedURL.appendPathComponent(subfolder)
+			}
+			expectedURL.appendPathComponent("\(episode.preferredFilename).mp4")
+			
+			var isDirectory = ObjCBool(false)
+			return FileManager.default.fileExists(atPath: expectedURL.path, isDirectory: &isDirectory) && !isDirectory.boolValue
+		}
+		
+		for episode in self.episodes {
+			let baseURLs = [
+				self.saveLocation!,
+				URL(fileURLWithPath: "/Volumes/Seagate Expansion/Big Data/TVB Drama"),
+				URL(fileURLWithPath: "/Volumes/Macintosh HD/TVB"),
+				URL(fileURLWithPath: "/Volumes/video/TVB Drama")
+			]
+			
+			episode.state = baseURLs.reduce(EpisodeDownloadState.notDownloaded) {
+				if $0 == .finished {
+					return .finished
+				} else {
+					return checkEpisode(episode, existsAtBaseURL: $1) ? .finished : .notDownloaded
+				}
 			}
 		}
 	}
+	
 	
 	@IBAction func browseLocation(_ sender: Any) {
 		let panel = NSOpenPanel()
 		panel.canChooseFiles = false
 		panel.canChooseDirectories = true
+		
 		panel.beginSheetModal(for: self.view.window!) { button in
-			guard button == NSFileHandlingPanelOKButton else {
+			guard button.rawValue == NSFileHandlingPanelOKButton else {
 				return
 			}
 			self.saveLocation = panel.url!
+		}
+	}
+	
+	func statisticsDidChange() {
+		DispatchQueue.main.async {
+			self.willChangeValue(forKey: "statistics")
+			self.didChangeValue(forKey: "statistics")
 		}
 	}
 	
@@ -81,22 +166,25 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 	
 	
 	// MARK: - Download & URLSessionDownloadDelegate
-	private let semaphore = DispatchSemaphore(value: 3)
-	private let downloadQueue = DispatchQueue(label: "com.ldresearch.operationTVB.episodeDownloadQueue", qos: .background, attributes: [.concurrent])
+	private let semaphore = DispatchSemaphore(value: 5)
+	private let downloadQueue = DispatchQueue(label: "com.ldresearch.operationTVB.episodeDownloadQueue", qos: .background, attributes: [])
 	
 	@IBAction func download(_ sender: Any) {
-		for (index, episode) in self.episodes.enumerated() where index < 67 && episode.state != .downloading {
+		for episode in self.episodes where episode.state == .notDownloaded || episode.state.hasFailed {
+			download(episode: episode, waitTime: 0..<60)
+		}
+	}
+	
+	private func download(episode: Episode, waitTime: Range<Double>) {
+		episode.state = .notDownloaded
+		downloadQueue.async {
+			self.semaphore.wait()
+			let waitTime = Utility.randBetween(lowerbound: waitTime.lowerBound, upperbound: waitTime.upperBound)
 			
-			downloadQueue.async {
-				self.semaphore.wait()
-				
-				let waitTime = Utility.randBetween(lowerbound: 0.0, upperbound: 60.0)
-				print("Next download: \(episode) in \(waitTime) seconds")
-				DispatchQueue.global(qos: .background).asyncAfter(deadline: .now() + waitTime) {
-					print("\(episode): start processing")
-					episode.state = .scheduled
-					episode.download(delegate: self)
-				}
+			episode.state = .scheduled(at: Utility.timeFromNow(offset: waitTime))
+			DispatchQueue.global(qos: .background).asyncAfter(deadline: .now() + waitTime) {
+				print("\(episode): start processing")
+				episode.download(delegate: self)
 			}
 		}
 	}
@@ -116,18 +204,6 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 		print("Session failed: \(error?.localizedDescription ?? "unknown session error")")
 	}
 	
-	func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
-		self.semaphore.signal()
-		guard let error = error else { return }
-		
-		// Handling error
-		if let taskDescription = task.taskDescription,
-			let episode = self.episodes.first(where: { $0.description == taskDescription })
-		{
-			episode.state = .failed(error: error.localizedDescription)
-		}
-	}
-	
 	func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {
 		print("\(downloadTask.taskDescription!): finished")
 		
@@ -141,17 +217,25 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 			// Fail the episode if the file size is too small
 			let fileAttributes = try! fileManager.attributesOfItem(atPath: location.path)
 			let fileSize = fileAttributes[FileAttributeKey.size] as! NSNumber
-			episode.state = fileSize.uint64Value < 1_000_000 ? .failed(error: "invalid movie") : .finished
+			
+			guard fileSize.uint64Value > 1_000_000 else {
+				episode.state = .failed(error: "file too small")
+				DispatchQueue.global(qos: .background).asyncAfter(deadline: .now() + 300) { // try again after 5 minutes
+					self.download(episode: episode, waitTime: 0..<60)
+				}
+				return
+			}
+			episode.state = .finished
 			
 			// Create a folder to hold the show
 			folderURL.appendPathComponent(episode.title)
-			if (episode.language ?? "Cantonese") != "Cantonese" {
-				folderURL.appendPathComponent("Extra")
+			if let subfolder = episode.preferredSubfolder {
+				folderURL.appendPathComponent(subfolder)
 			}
 			
 			var isDirectory = ObjCBool(false)
 			if !(fileManager.fileExists(atPath: folderURL.path, isDirectory: &isDirectory) && isDirectory.boolValue) {
-				try! fileManager.createDirectory(at: folderURL, withIntermediateDirectories: false, attributes: [:])
+				try! fileManager.createDirectory(at: folderURL, withIntermediateDirectories: true, attributes: [:])
 			}
 			
 			// Set the filename of the episode
@@ -161,6 +245,26 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 		
 		let finalURL = folderURL.appendingPathComponent(fileName)
 		try! fileManager.moveItem(at: location, to: finalURL, overwriteIfExists: true)
+	}
+	
+	func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
+		self.semaphore.signal()
+		self.statisticsDidChange()
+		
+		// Handling error
+		if let error = error,
+			let taskDescription = task.taskDescription,
+			let episode = self.episodes.first(where: { $0.description == taskDescription })
+		{
+			episode.state = .failed(error: error.localizedDescription)
+			
+			// Download again after 5 minutes
+			if error.localizedDescription != "No H265 Link" {
+				DispatchQueue.global(qos: .background).asyncAfter(deadline: .now() + 300) {
+					self.download(episode: episode, waitTime: 0..<60)
+				}
+			}
+		}
 	}
 }
 

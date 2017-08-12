@@ -11,7 +11,7 @@ import HTMLReader
 
 enum EpisodeDownloadState : Equatable {
 	case notDownloaded
-	case scheduled
+	case scheduled(at: String?)
 	case starting
 	case downloading
 	case finished
@@ -26,8 +26,18 @@ enum EpisodeDownloadState : Equatable {
 			return false
 		}
 	}
+	
+	var hasFailed: Bool {
+		switch self {
+		case .failed(error: _):
+			return true
+		default:
+			return false
+		}
+	}
 }
 
+@objcMembers
 class Episode : NSObject {
 	var title: String
 	var chineseTitle: String
@@ -43,14 +53,6 @@ class Episode : NSObject {
 		}
 	}
 	
-	var preferredFilename : String {
-		let language = self.language ?? "Cantonese"
-		if language == "Cantonese" {
-			return String(format: "%@ - E%02d", self.title, self.episodeNumber)
-		} else {
-			return String(format: "%@ (%@) - E%02d", self.title, language, self.episodeNumber)
-		}
-	}
 	
 	var maxRetries = 100
 	private var retries = 0
@@ -68,21 +70,53 @@ class Episode : NSObject {
 			return nil
 		}
 		
-		self.title = nsTitle.substring(with: match.rangeAt(1))
-		self.chineseTitle = nsTitle.substring(with: match.rangeAt(2))
-		self.episodeNumber = Int(nsTitle.substring(with: match.rangeAt(3)))!
+		self.title = nsTitle.substring(with: match.range(at: 1))
+		self.chineseTitle = nsTitle.substring(with: match.range(at: 2))
+		self.episodeNumber = Int(nsTitle.substring(with: match.range(at: 3)))!
 		self.url = URL(string: href)!
 		
 		if match.numberOfRanges == 5 {
-			self.language = nsTitle.substring(with: match.rangeAt(4))
+			self.language = nsTitle.substring(with: match.range(at: 4))
 		}
 	}
 	
+	// MARK: - Properties for saving files to disk
+	var preferredSubfolder : String? {
+		switch self.language {
+		case nil:
+			return nil
+		case .some(let lang) where ["Cantonese", "English/Cantonese Subtitles"].contains(lang):
+			return nil
+		default:
+			return "Extra"
+		}
+	}
 	
-	class func downloadEpisodeList(fromURL url: URL, completionHandler: @escaping ([Episode]) -> Void) {
-		let request = Utility.makeRequest(with: url)
+	var preferredTitle : String {
+		return self.title.replacingOccurrences(of: "/", with: "-").replacingOccurrences(of: ":", with: " -")
+	}
+	
+	var preferredFilename : String {
+		let title = self.preferredTitle
+		let language = self.language?.replacingOccurrences(of: "/", with: "-").replacingOccurrences(of: ":", with: " -") ?? "Cantonese"
 		
-		URLSession.shared.dataTask(with: request) { (data, response, error) in
+		if language == "Cantonese" {
+			return String(format: "%@ - E%02d", title, self.episodeNumber)
+		} else {
+			return String(format: "%@ (%@) - E%02d", title, language, self.episodeNumber)
+		}
+	}
+
+	
+	// MARK: - Get list of episodes
+	class func downloadEpisodeList(fromURL url: URL, completionHandler: @escaping ([Episode]) -> Void) {
+		var downloadURL = url
+		if downloadURL.lastPathComponent != "download" {
+			downloadURL.appendPathComponent("download")
+		}
+		let request = Utility.makeRequest(with: downloadURL)
+		
+		URLSession.shared.dataTask(with: request) { data, response, error in
 			guard error == nil else {
 				fatalError(error!.localizedDescription)
 			}
@@ -96,7 +130,7 @@ class Episode : NSObject {
 				if let episode = Episode(title: title, href: href) {
 					result.append(episode)
 				} else {
-					print("un-parsable: \(title)")
+					print("Unparsable title: \(title)")
 				}
 			}
 			result.sort {
@@ -113,7 +147,40 @@ class Episode : NSObject {
 			}
 			completionHandler(result)
 		}.resume()
-
+	}
+	
+	class func downloadEpisodeList(fromIndexPageURL url: URL, completionHandler: @escaping ([Episode]) -> Void) {
+		let queue = DispatchQueue(label: "com.ldresearch.operationTVB.downloadEpisodeList.fromIndexPageURL", qos: .background, attributes: [])
+		let request = Utility.makeRequest(with: url)
+		
+		URLSession.shared.dataTask(with: request) { data, response, error in
+			guard error == nil else {
+				print(error!.localizedDescription)
+				return
+			}
+			
+			let document = HTMLDocument(data: data!, contentTypeHeader: nil)
+			
+			queue.async {
+				let group = DispatchGroup()
+				var allEpisodes = [Episode]()
+				
+				for node in document.nodes(matchingSelector: "a.movie-image") {
+					let href = URL(string: node.attributes["href"]!)!
+					
+					group.enter()
+					self.downloadEpisodeList(fromURL: href) { episodes in
+						DispatchQueue.main.async {
+							allEpisodes.append(contentsOf: episodes)
+							group.leave()
+						}
+					}
+				}
+				
+				group.wait()
+				completionHandler(allEpisodes)
+			}
+		}.resume()
 	}
 	
 	
@@ -134,8 +201,17 @@ class Episode : NSObject {
 	private func loadPage1() {
 		let request = Utility.makeRequest(with: self.url)
 		URLSession.shared.dataTask(with: request) { data, response, error in
+			guard error == nil else {
+				self.forward(error: error, whileLoadingURL: request.url!)
+				return
+			}
+			
 			let document = HTMLDocument(data: data!, contentTypeHeader: nil)
-			let h265Anchor = document.firstNode(matchingSelector: "a", withContent: "H265")!
+			guard let h265Anchor = document.firstNode(matchingSelector: "a", withContent: "H265") else {
+				let error = NSError(domain: "com.ldresearch.operationTVB", code: 1, userInfo: [NSLocalizedDescriptionKey: "No H265 Link"])
+				self.forward(error: error, whileLoadingURL: request.url!)
+				return
+			}
 			let href = h265Anchor.attributes["href"]!
 			
 			self.loadPage2(href: href)
@@ -145,6 +221,18 @@ class Episode : NSObject {
 	private func loadPage2(href: String) {
 		let request = Utility.makeRequest(with: href)
 		URLSession.shared.dataTask(with: request) { data, response, error in
+			guard error == nil else {
+				self.forward(error: error, whileLoadingURL: request.url!)
+				return
+			}
+			
+			let response = response as! HTTPURLResponse
+			guard response.statusCode == 200 else {
+				let error = NSError(domain: "com.ldresearch.operationTVB", code: 2, userInfo: [NSLocalizedDescriptionKey: "\(response.statusCode) while loading \(href)"])
+				self.forward(error: error, whileLoadingURL: URL(string: href)!)
+				return
+			}
+			
 			let document = HTMLDocument(data: data!, contentTypeHeader: nil)
 			let highQualityAnchor = document.firstNode(matchingSelector: "a", withContent: "High quality")
 			let normalQualityAnchor = document.firstNode(matchingSelector: "a", withContent: "Normal quality")
@@ -160,9 +248,9 @@ class Episode : NSObject {
 		let nsFunctionText = functionText as NSString
 		
 		let match = regex.firstMatch(in: functionText, options: [], range: NSMakeRange(0, nsFunctionText.length))!
-		let code = nsFunctionText.substring(with: match.rangeAt(1))
-		let mode = nsFunctionText.substring(with: match.rangeAt(2))
-		let hash = nsFunctionText.substring(with: match.rangeAt(3))
+		let code = nsFunctionText.substring(with: match.range(at: 1))
+		let mode = nsFunctionText.substring(with: match.range(at: 2))
+		let hash = nsFunctionText.substring(with: match.range(at: 3))
 		
 		var urlComponents = URLComponents(string: "http://h265.se/dl")!
 		urlComponents.queryItems = [
@@ -181,6 +269,11 @@ class Episode : NSObject {
 		request.setValue(cookie, forHTTPHeaderField: "Cookie")
 		
 		URLSession.shared.dataTask(with: request) { data, response, error in
+			guard error == nil else {
+				self.forward(error: error, whileLoadingURL: request.url!)
+				return
+			}
+			
 			let document = HTMLDocument(data: data!, contentTypeHeader: nil)
 			if let downloadAnchor = document.firstNode(matchingSelector: "a", withContent: "Direct Download Link") {
 				print("\(self.description): start download")
@@ -210,6 +303,13 @@ class Episode : NSObject {
 		task.resume()
 		
 		self.state = .downloading
+	}
+	
+	private func forward(error: Error?, whileLoadingURL url: URL) {
+		let task = URLSession.shared.dataTask(with: url)
+		task.taskDescription = self.description
+		
+		self.downloadDelegate.urlSession?(URLSession.shared, task: task, didCompleteWithError: error)
 	}
 	
 	// MARK: - Download state
@@ -243,8 +343,12 @@ class Episode : NSObject {
 		switch self.state {
 		case .notDownloaded:
 			return ""
-		case .scheduled:
-			return "Scheduled"
+		case .scheduled(let atTime):
+			if let atTime = atTime {
+				return "Scheduled for \(atTime)"
+			} else {
+				return "Scheduled"
+			}
 		case .starting:
 			return "Starting... \(self.retries + 1)"
 		case .downloading:
