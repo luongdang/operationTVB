@@ -59,7 +59,6 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 		self.saveLocation = URL(fileURLWithPath: "/Volumes/Macintosh HD/TVB")
 	}
 	
-	
 	@IBAction func addEpisodes(_ sender: NSButton) {
 		let url = URL(string: episodeURLField.stringValue)!
 		let completionHandler = { (episodes: [Episode]) in
