@@ -45,6 +45,7 @@
 		393B1804C172C73D8560B3FB /* Pods-OperationTVBTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OperationTVBTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-OperationTVBTests/Pods-OperationTVBTests.release.xcconfig"; sourceTree = "<group>"; };
 		3ECC72AAADE5E16264E3CBC5 /* Pods-OperationTVBUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OperationTVBUITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-OperationTVBUITests/Pods-OperationTVBUITests.release.xcconfig"; sourceTree = "<group>"; };
 		664F44953ECA70F7A796B02A /* Pods_OperationTVB.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_OperationTVB.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		7E00BDDE1F40C092008B1B4C /* TV Icon.psd */ = {isa = PBXFileReference; lastKnownFileType = file; path = "TV Icon.psd"; sourceTree = "<group>"; };
 		7E10703E1ECB0AED00AF5A0E /* HTMLNodeExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTMLNodeExtension.swift; sourceTree = "<group>"; };
 		7E1070401ECB0E2E00AF5A0E /* ProgressCellView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProgressCellView.swift; sourceTree = "<group>"; };
 		7E83AFC21EC92AF20052402D /* OperationTVB.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OperationTVB.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -97,9 +98,18 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		7E00BDDD1F40C092008B1B4C /* Assets */ = {
+			isa = PBXGroup;
+			children = (
+				7E00BDDE1F40C092008B1B4C /* TV Icon.psd */,
+			);
+			path = Assets;
+			sourceTree = "<group>";
+		};
 		7E83AFB91EC92AF20052402D = {
 			isa = PBXGroup;
 			children = (
+				7E00BDDD1F40C092008B1B4C /* Assets */,
 				7E83AFC41EC92AF20052402D /* OperationTVB */,
 				7E83AFD61EC92AF20052402D /* OperationTVBTests */,
 				7E83AFE11EC92AF20052402D /* OperationTVBUITests */,
