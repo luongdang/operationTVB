@@ -10,7 +10,13 @@ import Cocoa
 import WebKit
 import HTMLReader
 
-fileprivate var userAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.97 Safari/537.36 Vivaldi/1.9.818.49"
+fileprivate struct Constants {
+    /// Wait time before starting to download an episode
+    static let waitTime = 0.0 ..< 60.0
+    
+    /// The number of concurrent downloads
+    static let concurrentDownloads = 20
+}
 
 class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelegate, URLSessionDownloadDelegate {
 	@IBOutlet weak var episodeURLField: NSTextField!
@@ -53,7 +59,7 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 		return formatter
 	}()
 	
-	
+	// MARK: - Methods
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		self.saveLocation = URL(fileURLWithPath: "/Volumes/Macintosh HD/TVB")
@@ -165,17 +171,17 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 	
 	
 	// MARK: - Download & URLSessionDownloadDelegate
-	private let semaphore = DispatchSemaphore(value: 5)
+	private let semaphore = DispatchSemaphore(value: Constants.concurrentDownloads)
 	private let downloadQueue = DispatchQueue(label: "com.ldresearch.operationTVB.episodeDownloadQueue", qos: .background, attributes: [])
 	
 	@IBAction func download(_ sender: Any) {
 		for episode in self.episodes where episode.state == .notDownloaded || episode.state.hasFailed {
-			download(episode: episode, waitTime: 0..<60)
+			download(episode: episode, waitTime: Constants.waitTime)
 		}
 	}
 	
 	private func download(episode: Episode, waitTime: Range<Double>) {
-		episode.state = .notDownloaded
+		episode.state = .scheduled(at: nil)
 		downloadQueue.async {
 			self.semaphore.wait()
 			let waitTime = Utility.randBetween(lowerbound: waitTime.lowerBound, upperbound: waitTime.upperBound)

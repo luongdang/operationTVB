@@ -106,6 +106,16 @@
 			path = Assets;
 			sourceTree = "<group>";
 		};
+		7E5372001F92F36A00769481 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				7E83AFC91EC92AF20052402D /* Assets.xcassets */,
+				7E83AFCB1EC92AF20052402D /* Main.storyboard */,
+				7E83AFCE1EC92AF20052402D /* Info.plist */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
 		7E83AFB91EC92AF20052402D = {
 			isa = PBXGroup;
 			children = (
@@ -132,12 +142,12 @@
 		7E83AFC41EC92AF20052402D /* OperationTVB */ = {
 			isa = PBXGroup;
 			children = (
+				7E5372001F92F36A00769481 /* Resources */,
 				7E83AFC51EC92AF20052402D /* AppDelegate.swift */,
 				7E83AFF11EC93FDD0052402D /* Episode.swift */,
 				7EDFB1B81ECF8D570036AD33 /* FileManagerExtension.swift */,
 				7E10703E1ECB0AED00AF5A0E /* HTMLNodeExtension.swift */,
 				7E1070401ECB0E2E00AF5A0E /* ProgressCellView.swift */,
-				7E83AFF01EC92AFF0052402D /* Resources */,
 				7EE5E0541ECA6A9000B12442 /* Utility.swift */,
 				7E83AFC71EC92AF20052402D /* ViewController.swift */,
 			);
@@ -160,16 +170,6 @@
 				7E83AFE41EC92AF20052402D /* Info.plist */,
 			);
 			path = OperationTVBUITests;
-			sourceTree = "<group>";
-		};
-		7E83AFF01EC92AFF0052402D /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-				7E83AFC91EC92AF20052402D /* Assets.xcassets */,
-				7E83AFCB1EC92AF20052402D /* Main.storyboard */,
-				7E83AFCE1EC92AF20052402D /* Info.plist */,
-			);
-			name = Resources;
 			sourceTree = "<group>";
 		};
 		BD01C49078CB1FDF07D4946E /* Pods */ = {
@@ -272,7 +272,7 @@
 				TargetAttributes = {
 					7E83AFC11EC92AF20052402D = {
 						CreatedOnToolsVersion = 8.3.2;
-						DevelopmentTeam = 5EVPF55NCY;
+						DevelopmentTeam = 2QKW7VR3LM;
 						LastSwiftMigration = 0900;
 						ProvisioningStyle = Automatic;
 					};
@@ -643,12 +643,15 @@
 			baseConfigurationReference = B7E0558D58D0F5F4FF2594B8 /* Pods-OperationTVB.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = 5EVPF55NCY;
-				INFOPLIST_FILE = OperationTVB/Info.plist;
+				DEVELOPMENT_TEAM = 2QKW7VR3LM;
+				INFOPLIST_FILE = OperationTVB/Resources/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = LDResearch.OperationTVB;
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_SWIFT3_OBJC_INFERENCE = On;
 				SWIFT_VERSION = 4.0;
 			};
@@ -659,12 +662,15 @@
 			baseConfigurationReference = 9A16C9E149766E1DEB293853 /* Pods-OperationTVB.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = 5EVPF55NCY;
-				INFOPLIST_FILE = OperationTVB/Info.plist;
+				DEVELOPMENT_TEAM = 2QKW7VR3LM;
+				INFOPLIST_FILE = OperationTVB/Resources/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = LDResearch.OperationTVB;
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_SWIFT3_OBJC_INFERENCE = On;
 				SWIFT_VERSION = 4.0;
 			};

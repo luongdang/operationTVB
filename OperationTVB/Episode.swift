@@ -8,6 +8,22 @@
 
 import Foundation
 import HTMLReader
+import WebKit
+
+fileprivate struct Constants {
+	static let userAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.97 Safari/537.36 Vivaldi/1.9.818.49"
+	static let errorDomain = "com.ldresearch.operationTVB"
+
+	static let webViewSemaphore = DispatchSemaphore(value: 1)
+	static let webView: WKWebView = {
+		var webView: WKWebView!
+		DispatchQueue.main.sync {
+			webView = WKWebView(frame: .zero)
+			webView.customUserAgent = Constants.userAgent
+		}
+		return webView
+	}()
+}
 
 enum EpisodeDownloadState : Equatable {
 	case notDownloaded
@@ -53,7 +69,6 @@ class Episode : NSObject {
 		}
 	}
 	
-	
 	var maxRetries = 100
 	private var retries = 0
 	private var downloadDelegate: URLSessionDownloadDelegate!
@@ -63,21 +78,35 @@ class Episode : NSObject {
 		let regex1 = try! NSRegularExpression(pattern: "Download (.+) - (.+) - Episode (\\d+).*\\((.+)\\)", options: [])
 		let regex2 = try! NSRegularExpression(pattern: "Download (.+) - (.+) - Episode (\\d+)", options: [])
 		
+		/*
 		let nsTitle = title as NSString
 		let fullRange = NSMakeRange(0, nsTitle.length)
+		*/
+		let fullRange = NSRange(location: 0, length: title.utf16.count)
 		
 		guard let match = [regex1, regex2].reduce(nil, { $0 != nil ? $0 : $1.firstMatch(in: title, options: [], range: fullRange) }) else {
 			return nil
 		}
+
+		let ranges = (0 ..< match.numberOfRanges).map { Range(match.range(at: $0), in: title)! }
+		self.title = String(title[ranges[1]])
+		self.chineseTitle = String(title[ranges[2]])
+		self.episodeNumber = Int(title[ranges[3]])!
+		self.url = URL(string: href)!
 		
+		if ranges.count == 5 {
+			self.language = String(title[ranges[4]])
+		}
+		/*
 		self.title = nsTitle.substring(with: match.range(at: 1))
 		self.chineseTitle = nsTitle.substring(with: match.range(at: 2))
 		self.episodeNumber = Int(nsTitle.substring(with: match.range(at: 3)))!
 		self.url = URL(string: href)!
-		
+
 		if match.numberOfRanges == 5 {
 			self.language = nsTitle.substring(with: match.range(at: 4))
 		}
+		*/
 	}
 	
 	// MARK: - Properties for saving files to disk
@@ -195,106 +224,48 @@ class Episode : NSObject {
 			self.retries = 0
 		}
 		self.state = .starting
-		loadPage1()
+		loadPage1(in: Constants.webView)
 	}
 	
-	private func loadPage1() {
-		let request = Utility.makeRequest(with: self.url)
-		URLSession.shared.dataTask(with: request) { data, response, error in
-			guard error == nil else {
-				self.forward(error: error, whileLoadingURL: request.url!)
-				return
-			}
+	private func loadPage1(in webView: WKWebView) {
+		let request = Utility.makeRequest(with: url)
+		
+		Constants.webViewSemaphore.wait()
+		DispatchQueue.main.async {
+			webView.load(request)
 			
-			let document = HTMLDocument(data: data!, contentTypeHeader: nil)
-			guard let h265Anchor = document.firstNode(matchingSelector: "a", withContent: "H265") else {
-				let error = NSError(domain: "com.ldresearch.operationTVB", code: 1, userInfo: [NSLocalizedDescriptionKey: "No H265 Link"])
-				self.forward(error: error, whileLoadingURL: request.url!)
-				return
+			DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+				webView.evaluateJavaScript("document.documentElement.outerHTML") { result, error in
+					defer {
+						Constants.webViewSemaphore.signal()
+					}
+					guard error == nil else {
+						self.forward(error: error, whileLoadingURL: self.url)
+						return
+					}
+					guard let htmlString = result as? String else {
+						let error = NSError(domain: Constants.errorDomain, code: 1, userInfo: [NSLocalizedDescriptionKey: "Cannot extract HTML string"])
+						self.forward(error: error, whileLoadingURL: self.url)
+						return
+					}
+					
+					let document = HTMLDocument(string: htmlString)
+					let picasaAnchor = document.firstNode(matchingSelector: "a", withContent: "Picasaweb 720p") ??
+										document.firstNode(matchingSelector: "a", withContent: "Picasaweb 360p")
+					if picasaAnchor == nil {
+						let error = NSError(domain: Constants.errorDomain, code: 1, userInfo: [NSLocalizedDescriptionKey: "No Picasa link"])
+						self.forward(error: error, whileLoadingURL: self.url)
+						return
+					}
+					
+					let href = picasaAnchor!.attributes["href"]!
+					self.loadPage2(href: href)
+				}
 			}
-			let href = h265Anchor.attributes["href"]!
-			
-			self.loadPage2(href: href)
-		}.resume()
+		}
 	}
 	
 	private func loadPage2(href: String) {
-		let request = Utility.makeRequest(with: href)
-		URLSession.shared.dataTask(with: request) { data, response, error in
-			guard error == nil else {
-				self.forward(error: error, whileLoadingURL: request.url!)
-				return
-			}
-			
-			let response = response as! HTTPURLResponse
-			guard response.statusCode == 200 else {
-				let error = NSError(domain: "com.ldresearch.operationTVB", code: 2, userInfo: [NSLocalizedDescriptionKey: "\(response.statusCode) while loading \(href)"])
-				self.forward(error: error, whileLoadingURL: URL(string: href)!)
-				return
-			}
-			
-			let document = HTMLDocument(data: data!, contentTypeHeader: nil)
-			let highQualityAnchor = document.firstNode(matchingSelector: "a", withContent: "High quality")
-			let normalQualityAnchor = document.firstNode(matchingSelector: "a", withContent: "Normal quality")
-			
-			let downloadAnchor = (highQualityAnchor ?? normalQualityAnchor)!
-			let functionText = downloadAnchor.attributes["onclick"]!
-			self.loadPage3(functionText: functionText)
-		}.resume()
-	}
-	
-	private func loadPage3(functionText: String) {
-		let regex = try! NSRegularExpression(pattern: "download_video\\('(.+)','(.)','(.+)'\\)", options: [])
-		let nsFunctionText = functionText as NSString
-		
-		let match = regex.firstMatch(in: functionText, options: [], range: NSMakeRange(0, nsFunctionText.length))!
-		let code = nsFunctionText.substring(with: match.range(at: 1))
-		let mode = nsFunctionText.substring(with: match.range(at: 2))
-		let hash = nsFunctionText.substring(with: match.range(at: 3))
-		
-		var urlComponents = URLComponents(string: "http://h265.se/dl")!
-		urlComponents.queryItems = [
-			URLQueryItem(name: "op", value: "download_orig"),
-			URLQueryItem(name: "id", value: code),
-			URLQueryItem(name: "mode", value: mode),
-			URLQueryItem(name: "hash", value: hash)
-		]
-		
-		let cookie = HTTPCookieStorage.shared.cookies!
-						.filter { $0.domain == ".h265.se" }
-						.map { "\($0.name)=\($0.value)" }
-						.joined(separator: "; ")
-		
-		var request = Utility.makeRequest(with: urlComponents.url!)
-		request.setValue(cookie, forHTTPHeaderField: "Cookie")
-		
-		URLSession.shared.dataTask(with: request) { data, response, error in
-			guard error == nil else {
-				self.forward(error: error, whileLoadingURL: request.url!)
-				return
-			}
-			
-			let document = HTMLDocument(data: data!, contentTypeHeader: nil)
-			if let downloadAnchor = document.firstNode(matchingSelector: "a", withContent: "Direct Download Link") {
-				print("\(self.description): start download")
-				let href = downloadAnchor.attributes["href"]!
-				self.loadPage4(href: href)
-			} else if self.retries < self.maxRetries {
-				self.retries += 1
-				print("\(self.description): retries \(self.retries)")
-				
-				let waitTime = Utility.randBetween(lowerbound: 1.0, upperbound: 5.0)
-				DispatchQueue.global(qos: .background).asyncAfter(deadline: .now() + waitTime) {
-					self.download(delegate: self.downloadDelegate, resetRetries: false)
-				}
-				
-			} else {
-				fatalError("Too many retries")
-			}
-		}.resume()
-	}
-	
-	private func loadPage4(href: String) {
 		let session = URLSession(configuration: .default, delegate: self.downloadDelegate, delegateQueue: nil)
 		let request = Utility.makeRequest(with: href)
 		
@@ -367,9 +338,10 @@ class Episode : NSObject {
 			return NSColor.lightGray
 		case .failed:
 			return NSColor.red
+		case .scheduled(_):
+			return NSColor.lightGray
 		default:
 			return NSColor.black
 		}
 	}
 }
-
