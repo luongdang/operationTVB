@@ -12,11 +12,13 @@
 		733BCFFDDF7B79215F83C283 /* Pods_OperationTVBTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E448D8BD47C25FE052F7C20E /* Pods_OperationTVBTests.framework */; };
 		7E10703F1ECB0AED00AF5A0E /* HTMLNodeExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E10703E1ECB0AED00AF5A0E /* HTMLNodeExtension.swift */; };
 		7E1070411ECB0E2E00AF5A0E /* ProgressCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E1070401ECB0E2E00AF5A0E /* ProgressCellView.swift */; };
+		7E63D7311F959A48003B8761 /* EpisodeInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E63D7301F959A48003B8761 /* EpisodeInfo.swift */; };
+		7E63D7331F95A23F003B8761 /* TestUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E63D7321F95A23F003B8761 /* TestUtility.swift */; };
+		7E63D7361F95A514003B8761 /* TestEpisodeInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E63D7351F95A514003B8761 /* TestEpisodeInfo.swift */; };
 		7E83AFC61EC92AF20052402D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E83AFC51EC92AF20052402D /* AppDelegate.swift */; };
 		7E83AFC81EC92AF20052402D /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E83AFC71EC92AF20052402D /* ViewController.swift */; };
 		7E83AFCA1EC92AF20052402D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7E83AFC91EC92AF20052402D /* Assets.xcassets */; };
 		7E83AFCD1EC92AF20052402D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7E83AFCB1EC92AF20052402D /* Main.storyboard */; };
-		7E83AFD81EC92AF20052402D /* OperationTVBTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E83AFD71EC92AF20052402D /* OperationTVBTests.swift */; };
 		7E83AFE31EC92AF20052402D /* OperationTVBUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E83AFE21EC92AF20052402D /* OperationTVBUITests.swift */; };
 		7E83AFF21EC93FDD0052402D /* Episode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E83AFF11EC93FDD0052402D /* Episode.swift */; };
 		7EDFB1B91ECF8D570036AD33 /* FileManagerExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EDFB1B81ECF8D570036AD33 /* FileManagerExtension.swift */; };
@@ -48,6 +50,9 @@
 		7E00BDDE1F40C092008B1B4C /* TV Icon.psd */ = {isa = PBXFileReference; lastKnownFileType = file; path = "TV Icon.psd"; sourceTree = "<group>"; };
 		7E10703E1ECB0AED00AF5A0E /* HTMLNodeExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTMLNodeExtension.swift; sourceTree = "<group>"; };
 		7E1070401ECB0E2E00AF5A0E /* ProgressCellView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProgressCellView.swift; sourceTree = "<group>"; };
+		7E63D7301F959A48003B8761 /* EpisodeInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EpisodeInfo.swift; sourceTree = "<group>"; };
+		7E63D7321F95A23F003B8761 /* TestUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestUtility.swift; sourceTree = "<group>"; };
+		7E63D7351F95A514003B8761 /* TestEpisodeInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestEpisodeInfo.swift; sourceTree = "<group>"; };
 		7E83AFC21EC92AF20052402D /* OperationTVB.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OperationTVB.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7E83AFC51EC92AF20052402D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		7E83AFC71EC92AF20052402D /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -55,7 +60,6 @@
 		7E83AFCC1EC92AF20052402D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		7E83AFCE1EC92AF20052402D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7E83AFD31EC92AF20052402D /* OperationTVBTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OperationTVBTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		7E83AFD71EC92AF20052402D /* OperationTVBTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationTVBTests.swift; sourceTree = "<group>"; };
 		7E83AFD91EC92AF20052402D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7E83AFDE1EC92AF20052402D /* OperationTVBUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OperationTVBUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		7E83AFE21EC92AF20052402D /* OperationTVBUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationTVBUITests.swift; sourceTree = "<group>"; };
@@ -150,6 +154,7 @@
 				7E1070401ECB0E2E00AF5A0E /* ProgressCellView.swift */,
 				7EE5E0541ECA6A9000B12442 /* Utility.swift */,
 				7E83AFC71EC92AF20052402D /* ViewController.swift */,
+				7E63D7301F959A48003B8761 /* EpisodeInfo.swift */,
 			);
 			path = OperationTVB;
 			sourceTree = "<group>";
@@ -157,8 +162,9 @@
 		7E83AFD61EC92AF20052402D /* OperationTVBTests */ = {
 			isa = PBXGroup;
 			children = (
-				7E83AFD71EC92AF20052402D /* OperationTVBTests.swift */,
 				7E83AFD91EC92AF20052402D /* Info.plist */,
+				7E63D7321F95A23F003B8761 /* TestUtility.swift */,
+				7E63D7351F95A514003B8761 /* TestEpisodeInfo.swift */,
 			);
 			path = OperationTVBTests;
 			sourceTree = "<group>";
@@ -272,7 +278,7 @@
 				TargetAttributes = {
 					7E83AFC11EC92AF20052402D = {
 						CreatedOnToolsVersion = 8.3.2;
-						DevelopmentTeam = 2QKW7VR3LM;
+						DevelopmentTeam = 5EVPF55NCY;
 						LastSwiftMigration = 0900;
 						ProvisioningStyle = Automatic;
 					};
@@ -488,6 +494,7 @@
 				7E1070411ECB0E2E00AF5A0E /* ProgressCellView.swift in Sources */,
 				7EE5E0551ECA6A9000B12442 /* Utility.swift in Sources */,
 				7E83AFC61EC92AF20052402D /* AppDelegate.swift in Sources */,
+				7E63D7311F959A48003B8761 /* EpisodeInfo.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -495,7 +502,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7E83AFD81EC92AF20052402D /* OperationTVBTests.swift in Sources */,
+				7E63D7331F95A23F003B8761 /* TestUtility.swift in Sources */,
+				7E63D7361F95A514003B8761 /* TestEpisodeInfo.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -646,7 +654,7 @@
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = 2QKW7VR3LM;
+				DEVELOPMENT_TEAM = 5EVPF55NCY;
 				INFOPLIST_FILE = OperationTVB/Resources/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
@@ -665,7 +673,7 @@
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = 2QKW7VR3LM;
+				DEVELOPMENT_TEAM = 5EVPF55NCY;
 				INFOPLIST_FILE = OperationTVB/Resources/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
@@ -682,12 +690,15 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = 5EVPF55NCY;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = OperationTVBTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = LDResearch.OperationTVBTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_SWIFT3_OBJC_INFERENCE = On;
 				SWIFT_VERSION = 4.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/OperationTVB.app/Contents/MacOS/OperationTVB";
@@ -700,12 +711,15 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = 5EVPF55NCY;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = OperationTVBTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = LDResearch.OperationTVBTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_SWIFT3_OBJC_INFERENCE = On;
 				SWIFT_VERSION = 4.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/OperationTVB.app/Contents/MacOS/OperationTVB";

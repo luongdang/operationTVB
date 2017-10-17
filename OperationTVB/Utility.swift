@@ -70,4 +70,9 @@ struct Utility {
 		let regex = try! NSRegularExpression(pattern: regexPattern, options: options)
 		return regex.firstMatch(in: str, options: [], range: NSMakeRange(0, str.utf16.count)) != nil
 	}
+	
+	static func substring(for match: NSTextCheckingResult, at index: Int, in text: String) -> String {
+		let range = Range(match.range(at: index), in: text)!
+		return String(text[range])
+	}
 }
