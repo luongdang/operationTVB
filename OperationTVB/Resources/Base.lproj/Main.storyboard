@@ -905,7 +905,7 @@ DQ
                                                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                                     </textFieldCell>
                                                                     <connections>
-                                                                        <binding destination="XCK-Ad-sfl" name="value" keyPath="objectValue.episodeNumber" id="n5H-4N-g1G"/>
+                                                                        <binding destination="XCK-Ad-sfl" name="value" keyPath="objectValue.episode" id="aet-1f-Bul"/>
                                                                     </connections>
                                                                 </textField>
                                                             </subviews>
@@ -1008,7 +1008,6 @@ DQ
                             </button>
                         </subviews>
                         <constraints>
-                            <constraint firstItem="1Ms-hx-yTP" firstAttribute="leading" secondItem="d8g-Xc-Xze" secondAttribute="trailing" constant="8" id="0bm-ts-URF"/>
                             <constraint firstItem="03s-N4-Yce" firstAttribute="width" secondItem="1Ms-hx-yTP" secondAttribute="width" id="7Sf-UP-p4G"/>
                             <constraint firstItem="03s-N4-Yce" firstAttribute="leading" secondItem="s1S-5i-ikJ" secondAttribute="trailing" constant="8" id="FDq-PD-pxj"/>
                             <constraint firstItem="Dye-HV-Axh" firstAttribute="leading" secondItem="AEs-B2-4P1" secondAttribute="trailing" constant="8" id="Hhs-7I-KkC"/>
@@ -1023,6 +1022,7 @@ DQ
                             <constraint firstItem="d8g-Xc-Xze" firstAttribute="leading" secondItem="CC8-gB-Qm2" secondAttribute="trailing" constant="8" id="YH0-yB-I72"/>
                             <constraint firstItem="d8g-Xc-Xze" firstAttribute="leading" secondItem="s1S-5i-ikJ" secondAttribute="leading" id="bBX-oI-Zcf"/>
                             <constraint firstItem="Dye-HV-Axh" firstAttribute="baseline" secondItem="AEs-B2-4P1" secondAttribute="baseline" id="dEx-lV-eNz"/>
+                            <constraint firstItem="1Ms-hx-yTP" firstAttribute="leading" secondItem="d8g-Xc-Xze" secondAttribute="trailing" constant="8" id="ezl-RR-LU6"/>
                             <constraint firstItem="CC8-gB-Qm2" firstAttribute="baseline" secondItem="d8g-Xc-Xze" secondAttribute="baseline" id="fZ0-W0-3D7"/>
                             <constraint firstAttribute="trailing" secondItem="Wlb-Qr-aql" secondAttribute="trailing" constant="20" id="hzh-MW-7e4"/>
                             <constraint firstItem="03s-N4-Yce" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" constant="20" id="jds-lK-Zi4"/>

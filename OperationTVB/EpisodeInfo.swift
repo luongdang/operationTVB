@@ -13,7 +13,6 @@ enum EpisodeType {
 	case tvShow
 }
 
-
 struct EpisodeInfo {
 	var episodeType: EpisodeType
 	var englishTitle: String
@@ -48,18 +47,10 @@ struct EpisodeInfo {
 			}
 			
 		case .tvShow:
-			if let pattern = try? NSRegularExpression(pattern: "Download (.+) - Episode (.+) \\((.+)\\)", options: []),
+			if let pattern = try? NSRegularExpression(pattern: "Download (.+) - (?:Episode )?(.+) \\((.+)\\)", options: []),
 				let match = pattern.firstMatch(in: title, options: [], range: fullRange)
 			{
-				self.episodeType  = .drama
-				self.englishTitle = Utility.substring(for: match, at: 1, in: title)
-				self.episode      = Utility.substring(for: match, at: 2, in: title)
-				self.language     = Utility.substring(for: match, at: 3, in: title)
-			}
-			else if let pattern = try? NSRegularExpression(pattern: "Download (.+) - (.+) \\((.+)\\)", options: []),
-				let match = pattern.firstMatch(in: title, options: [], range: fullRange)
-			{
-				self.episodeType  = .drama
+				self.episodeType  = .tvShow
 				self.englishTitle = Utility.substring(for: match, at: 1, in: title)
 				self.episode      = Utility.substring(for: match, at: 2, in: title)
 				self.language     = Utility.substring(for: match, at: 3, in: title)

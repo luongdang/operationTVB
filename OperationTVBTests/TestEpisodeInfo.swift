@@ -27,7 +27,7 @@ class TestEpisodeInfo: XCTestCase {
 			XCTAssert(info.episode == "05")
 			XCTAssert(info.language == "Cantonese")
 		} else {
-			XCTFail("info is null")
+			XCTFail("info must not be null")
 		}
 		
 		if let info = EpisodeInfo(title: "Download Oh My Grad - Episode 05 (English Subtitles)", type: .drama) {
@@ -35,7 +35,7 @@ class TestEpisodeInfo: XCTestCase {
 			XCTAssert(info.episode == "05")
 			XCTAssert(info.language == "English Subtitles")
 		} else {
-			XCTFail("info is null")
+			XCTFail("info must not be null")
 		}
 		
 		// An invalid title
@@ -48,7 +48,7 @@ class TestEpisodeInfo: XCTestCase {
 			XCTAssert(info.episode == "2017-10-15")
 			XCTAssert(info.language == "Cantonese")
 		} else {
-			XCTFail("info is null")
+			XCTFail("info must not be null")
 		}
 		
 		if let info = EpisodeInfo(title: "Download J.S.G Music - 2017-10-15 (Cantonese)", type: .tvShow) {
@@ -56,7 +56,7 @@ class TestEpisodeInfo: XCTestCase {
 			XCTAssert(info.episode == "2017-10-15")
 			XCTAssert(info.language == "Cantonese")
 		} else {
-			XCTFail("info is null")
+			XCTFail("info must not be null")
 		}
 		
 		if let info = EpisodeInfo(title: "Download Girls’ Talk - Monday - Episode 29 (Cantonese)", type: .tvShow) {
@@ -64,7 +64,23 @@ class TestEpisodeInfo: XCTestCase {
 			XCTAssert(info.episode == "29")
 			XCTAssert(info.language == "Cantonese")
 		} else {
-			XCTFail("info is null")
+			XCTFail("info must not be null")
+		}
+		
+		if let info = EpisodeInfo(title: "Download Sunday Report - 2017-10-15 (Cantonese)", type: .tvShow) {
+			XCTAssert(info.englishTitle == "Sunday Report")
+			XCTAssert(info.episode == "2017-10-15")
+			XCTAssert(info.language == "Cantonese")
+		} else {
+			XCTFail("info must not be null")
+		}
+		
+		if let info = EpisodeInfo(title: "Download Cantopop At 50 Part 1 - Special (Cantonese)", type: .tvShow) {
+			XCTAssert(info.englishTitle == "Cantopop At 50 Part 1")
+			XCTAssert(info.episode == "Special")
+			XCTAssert(info.language == "Cantonese")
+		} else {
+			XCTFail("info must not be null")
 		}
 	}
 

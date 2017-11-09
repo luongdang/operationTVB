@@ -10,11 +10,18 @@ import Foundation
 import HTMLReader
 import WebKit
 
+
 fileprivate struct Constants {
+	/// The User Agent string used to connect to the website
 	static let userAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.97 Safari/537.36 Vivaldi/1.9.818.49"
+	
+	/// The domain for all errors originated from the Episode class
 	static let errorDomain = "com.ldresearch.operationTVB"
 
+	/// The semaphore to control access to webView
 	static let webViewSemaphore = DispatchSemaphore(value: 1)
+	
+	/// The web view in which the site is loaded
 	static let webView: WKWebView = {
 		var webView: WKWebView!
 		DispatchQueue.main.sync {
@@ -22,6 +29,14 @@ fileprivate struct Constants {
 			webView.customUserAgent = Constants.userAgent
 		}
 		return webView
+	}()
+	
+	/// The formatter used to convert episode into date
+	static let episodeDateFormatter: DateFormatter = {
+		let formatter = DateFormatter()
+		formatter.locale = Locale(identifier: "en_US")
+		formatter.dateFormat = "yyyy-MM-dd"
+		return formatter
 	}()
 }
 
@@ -55,58 +70,38 @@ enum EpisodeDownloadState : Equatable {
 
 @objcMembers
 class Episode : NSObject {
+	var type: EpisodeType
 	var title: String
-	var chineseTitle: String
+	var chineseTitle: String?
 	var language: String?
-	var episodeNumber: Int
+	var episode: String
+	var episodeNumber: Int? {
+		return Int(self.episode)
+	}
+	var episodeAirDate: Date? {
+		return Constants.episodeDateFormatter.date(from: episode)
+	}
+	
 	var url: URL
 	
 	override var description: String {
-		if let language = self.language {
-			return String(format: "%@ - E%02d (%@)", title, episodeNumber, language)
-		} else {
-			return String(format: "%@ - E%02d", title, episodeNumber)
-		}
+		return self.preferredFilename
 	}
 	
-	var maxRetries = 100
-	private var retries = 0
 	private var downloadDelegate: URLSessionDownloadDelegate!
 	
-	
-	init?(title: String, href: String) {
-		let regex1 = try! NSRegularExpression(pattern: "Download (.+) - (.+) - Episode (\\d+).*\\((.+)\\)", options: [])
-		let regex2 = try! NSRegularExpression(pattern: "Download (.+) - (.+) - Episode (\\d+)", options: [])
-		
-		/*
-		let nsTitle = title as NSString
-		let fullRange = NSMakeRange(0, nsTitle.length)
-		*/
-		let fullRange = NSRange(location: 0, length: title.utf16.count)
-		
-		guard let match = [regex1, regex2].reduce(nil, { $0 != nil ? $0 : $1.firstMatch(in: title, options: [], range: fullRange) }) else {
+	// MARK: -
+	init?(title: String, href: String, episodeType: EpisodeType) {
+		guard let info = EpisodeInfo(title: title, type: episodeType) else {
 			return nil
 		}
-
-		let ranges = (0 ..< match.numberOfRanges).map { Range(match.range(at: $0), in: title)! }
-		self.title = String(title[ranges[1]])
-		self.chineseTitle = String(title[ranges[2]])
-		self.episodeNumber = Int(title[ranges[3]])!
-		self.url = URL(string: href)!
 		
-		if ranges.count == 5 {
-			self.language = String(title[ranges[4]])
-		}
-		/*
-		self.title = nsTitle.substring(with: match.range(at: 1))
-		self.chineseTitle = nsTitle.substring(with: match.range(at: 2))
-		self.episodeNumber = Int(nsTitle.substring(with: match.range(at: 3)))!
-		self.url = URL(string: href)!
-
-		if match.numberOfRanges == 5 {
-			self.language = nsTitle.substring(with: match.range(at: 4))
-		}
-		*/
+		self.type         = info.episodeType
+		self.title        = info.englishTitle
+		self.chineseTitle = info.originalTitle
+		self.language     = info.language
+		self.episode      = info.episode
+		self.url          = URL(string: href)!
 	}
 	
 	// MARK: - Properties for saving files to disk
@@ -129,24 +124,36 @@ class Episode : NSObject {
 		let title = self.preferredTitle
 		let language = self.language?.replacingOccurrences(of: "/", with: "-").replacingOccurrences(of: ":", with: " -") ?? "Cantonese"
 		
-		if language == "Cantonese" {
-			return String(format: "%@ - E%02d", title, self.episodeNumber)
+		let episode: String
+		if let episodeNumber = self.episodeNumber {
+			episode = String(format: "E%02d", episodeNumber)
 		} else {
-			return String(format: "%@ (%@) - E%02d", title, language, self.episodeNumber)
+			episode = self.episode
+		}
+		
+		if language == "Cantonese" {
+			return "\(title) - \(episode)"
+		} else {
+			// return String(format: "%@ (%@) - E%02d", title, language, self.episode)
+			return "\(title) (\(language)) - \(episode)"
 		}
 	}
 
 	
 	// MARK: - Get list of episodes
-	class func downloadEpisodeList(fromURL url: URL, completionHandler: @escaping ([Episode]) -> Void) {
+	class func downloadEpisodeList(from url: URL, completionHandler: @escaping ([Episode]) -> Void) {
 		var downloadURL = url
 		if downloadURL.lastPathComponent != "download" {
 			downloadURL.appendPathComponent("download")
 		}
 		let request = Utility.makeRequest(with: downloadURL)
 		
+		let pathComponents = url.pathComponents
+		let episodeType: EpisodeType = pathComponents.contains("hk-show") ? .tvShow : .drama
+		
 		URLSession.shared.dataTask(with: request) { data, response, error in
 			guard error == nil else {
+				// FIXME: do something about this
 				fatalError(error!.localizedDescription)
 			}
 			
@@ -154,36 +161,27 @@ class Episode : NSObject {
 			var result = [Episode]()
 			
 			for node in document.nodes(matchingSelector: "a[title^=\"Download\"]") {
-				let title = node.attributes["title"]!
+				let title = node.textContent
 				let href = node.attributes["href"]!
-				if let episode = Episode(title: title, href: href) {
+				
+				if let episode = Episode(title: title, href: href, episodeType: episodeType) {
 					result.append(episode)
 				} else {
+					// FIXME: do something about this
 					print("Unparsable title: \(title)")
-				}
-			}
-			result.sort {
-				let language0 = $0.language ?? ""
-				let language1 = $1.language ?? ""
-				let episodeNumber0 = $0.episodeNumber
-				let episodeNumber1 = $1.episodeNumber
-				
-				if language0 != language1 {
-					return language0 < language1
-				} else {
-					return episodeNumber0 < episodeNumber1
 				}
 			}
 			completionHandler(result)
 		}.resume()
 	}
 	
-	class func downloadEpisodeList(fromIndexPageURL url: URL, completionHandler: @escaping ([Episode]) -> Void) {
+	class func downloadEpisodeList(fromIndexPage url: URL, completionHandler: @escaping ([Episode]) -> Void) {
 		let queue = DispatchQueue(label: "com.ldresearch.operationTVB.downloadEpisodeList.fromIndexPageURL", qos: .background, attributes: [])
 		let request = Utility.makeRequest(with: url)
 		
 		URLSession.shared.dataTask(with: request) { data, response, error in
 			guard error == nil else {
+				// FIXME: do something about this
 				print(error!.localizedDescription)
 				return
 			}
@@ -195,10 +193,13 @@ class Episode : NSObject {
 				var allEpisodes = [Episode]()
 				
 				for node in document.nodes(matchingSelector: "a.movie-image") {
-					let href = URL(string: node.attributes["href"]!)!
+					guard let url = URL(string: node.attributes["href"]!) else {
+						print("Invalid href: '\(node.attributes["href"]!)'")
+						continue
+					}
 					
 					group.enter()
-					self.downloadEpisodeList(fromURL: href) { episodes in
+					self.downloadEpisodeList(from: url) { episodes in
 						DispatchQueue.main.async {
 							allEpisodes.append(contentsOf: episodes)
 							group.leave()
@@ -215,14 +216,7 @@ class Episode : NSObject {
 	
 	// MARK: - Download an episode
 	func download(delegate: URLSessionDownloadDelegate) {
-		download(delegate: delegate, resetRetries: true)
-	}
-	
-	private func download(delegate: URLSessionDownloadDelegate, resetRetries: Bool) {
 		self.downloadDelegate = delegate
-		if resetRetries {
-			self.retries = 0
-		}
 		self.state = .starting
 		loadPage1(in: Constants.webView)
 	}
@@ -321,7 +315,7 @@ class Episode : NSObject {
 				return "Scheduled"
 			}
 		case .starting:
-			return "Starting... \(self.retries + 1)"
+			return "Starting..."
 		case .downloading:
 			let percentage = self.totalBytesExpected > 0 ? Double(self.totalBytesWritten) / Double(self.totalBytesExpected) : 0
 			return self.downloadProgressFormatter.string(from: NSNumber(value: percentage))!
@@ -340,8 +334,38 @@ class Episode : NSObject {
 			return NSColor.red
 		case .scheduled(_):
 			return NSColor.lightGray
+		case .starting:
+			return NSColor(deviceRed: 0.086, green: 0.602, blue: 0.042, alpha: 1)
 		default:
 			return NSColor.black
+		}
+	}
+}
+
+extension Episode: Comparable {
+	static func <(lhs: Episode, rhs: Episode) -> Bool {
+		if lhs.title != rhs.title {
+			return lhs.title < rhs.title
+		}
+		else if lhs.language != rhs.language {
+			return (lhs.language ?? "" ) < (rhs.language ?? "")
+		}
+		else if let lhsEpisode = lhs.episodeNumber,
+			let rhsEpisode = rhs.episodeNumber,
+			lhsEpisode != rhsEpisode
+		{
+			return lhsEpisode < rhsEpisode
+		}
+		else if let lhsEpisode = lhs.episodeAirDate,
+			let rhsEpisode = rhs.episodeAirDate,
+			lhsEpisode != rhsEpisode
+		{
+			return lhsEpisode < rhsEpisode
+		}
+		else if lhs.episode != rhs.episode {
+			return lhs.episode < rhs.episode
+		} else {
+			return true
 		}
 	}
 }
