@@ -92,17 +92,36 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 			return
 		}
 		
+		let progressIndicator = NSProgressIndicator(frame: NSRect(x: 0, y: 0, width: 300, height: 16))
+		progressIndicator.isIndeterminate = true
+		progressIndicator.startAnimation(nil)
+		
+		let alert = NSAlert()
+		alert.messageText = "Downloading episode list"
+		alert.informativeText = " "
+		alert.alertStyle = .informational
+		alert.accessoryView = progressIndicator
+		alert.addButton(withTitle: "Cancel")
+		alert.beginSheetModal(for: self.view.window!, completionHandler: nil)
+		
+		let progressHandler = { (episode: Episode) in
+			DispatchQueue.main.async {
+				alert.informativeText = episode.title
+			}
+		}
+		
 		let completionHandler = { (episodes: [Episode]) in
 			DispatchQueue.main.async {
 				self.episodes.append(contentsOf: episodes.sorted())
 				self.updateState(self)
+				self.view.window?.endSheet(alert.window)
 			}
 		}
 		
 		if Utility.string(url.lastPathComponent, matchRegex: "page-(\\d+).html") {
-			Episode.downloadEpisodeList(fromIndexPage: url, completionHandler: completionHandler)
+			Episode.downloadEpisodeList(fromIndexPage: url, progressHandler: progressHandler, completionHandler: completionHandler)
 		} else {
-			Episode.downloadEpisodeList(from: url, completionHandler: completionHandler)
+			Episode.downloadEpisodeList(from: url, progressHandler: progressHandler, completionHandler: completionHandler)
 		}
 	}
 	
@@ -111,7 +130,7 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 	}
 	
 	@IBAction func updateState(_ sender : Any) {
-		func check(episode: Episode, existsAtBaseURL baseURL: URL) -> Bool {
+		func episodeExist(_ episode: Episode, at baseURL: URL) -> Bool {
 			var expectedURL = baseURL.appendingPathComponent(episode.preferredTitle)
 			
 			if let subfolder = episode.preferredSubfolder {
@@ -129,8 +148,10 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 			episode.state = baseURLs.reduce(EpisodeDownloadState.notDownloaded) {
 				if $0 == .finished {
 					return .finished
+				} else if episodeExist(episode, at: $1) {
+					return .finished
 				} else {
-					return check(episode: episode, existsAtBaseURL: $1) ? .finished : .notDownloaded
+					return .notDownloaded
 				}
 			}
 		}

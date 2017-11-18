@@ -88,6 +88,11 @@ class Episode : NSObject {
 		return self.preferredFilename
 	}
 	
+	/// A string describing the epside type for Cocoa Binding
+	var episodeType: String {
+		return self.type.description
+	}
+	
 	private var downloadDelegate: URLSessionDownloadDelegate!
 	
 	// MARK: -
@@ -140,8 +145,15 @@ class Episode : NSObject {
 	}
 
 	
-	// MARK: - Get list of episodes
-	class func downloadEpisodeList(from url: URL, completionHandler: @escaping ([Episode]) -> Void) {
+	// MARK: - Ge
+	
+	/// Retrieve the list of episode some from the Download page of a show
+	///
+	/// - Parameters:
+	///   - url: The URL of the download page
+	///   - progressHandler: The function to call when a new episode has been detected
+	///   - completionHandler: The function to call when the list of all episodes has been retrieved
+	class func downloadEpisodeList(from url: URL, progressHandler: @escaping ((Episode) -> Void?), completionHandler: @escaping ([Episode]) -> Void) {
 		var downloadURL = url
 		if downloadURL.lastPathComponent != "download" {
 			downloadURL.appendPathComponent("download")
@@ -166,6 +178,7 @@ class Episode : NSObject {
 				
 				if let episode = Episode(title: title, href: href, episodeType: episodeType) {
 					result.append(episode)
+					progressHandler(episode)
 				} else {
 					// FIXME: do something about this
 					print("Unparsable title: \(title)")
@@ -175,7 +188,7 @@ class Episode : NSObject {
 		}.resume()
 	}
 	
-	class func downloadEpisodeList(fromIndexPage url: URL, completionHandler: @escaping ([Episode]) -> Void) {
+	class func downloadEpisodeList(fromIndexPage url: URL, progressHandler: @escaping ((Episode) -> Void?), completionHandler: @escaping ([Episode]) -> Void) {
 		let queue = DispatchQueue(label: "com.ldresearch.operationTVB.downloadEpisodeList.fromIndexPageURL", qos: .background, attributes: [])
 		let request = Utility.makeRequest(with: url)
 		
@@ -187,7 +200,6 @@ class Episode : NSObject {
 			}
 			
 			let document = HTMLDocument(data: data!, contentTypeHeader: nil)
-			
 			queue.async {
 				let group = DispatchGroup()
 				var allEpisodes = [Episode]()
@@ -199,7 +211,7 @@ class Episode : NSObject {
 					}
 					
 					group.enter()
-					self.downloadEpisodeList(from: url) { episodes in
+					self.downloadEpisodeList(from: url, progressHandler: progressHandler) { episodes in
 						DispatchQueue.main.async {
 							allEpisodes.append(contentsOf: episodes)
 							group.leave()

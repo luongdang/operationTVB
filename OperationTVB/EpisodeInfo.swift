@@ -8,9 +8,18 @@
 
 import Foundation
 
-enum EpisodeType {
+enum EpisodeType: CustomStringConvertible {
 	case drama
 	case tvShow
+	
+	var description: String {
+		switch self {
+		case .drama:
+			return "Drama"
+		case .tvShow:
+			return "TV Show"
+		}
+	}
 }
 
 struct EpisodeInfo {
@@ -25,7 +34,7 @@ struct EpisodeInfo {
 		
 		switch type {
 		case .drama:
-			if let pattern = try? NSRegularExpression(pattern: "Download (.+) - Episode (\\d+) \\((.+)\\)", options: []),
+			if let pattern = try? NSRegularExpression(pattern: "Download (.+) - Episode (\\d+).+\\((.+)\\)", options: []),
 				let match = pattern.firstMatch(in: title, options: [], range: fullRange)
 			{
 				self.episodeType  = .drama
@@ -33,7 +42,7 @@ struct EpisodeInfo {
 				self.episode      = Utility.substring(for: match, at: 2, in: title)
 				self.language     = Utility.substring(for: match, at: 3, in: title)
 			}
-			else if let pattern = try? NSRegularExpression(pattern: "Download (.+) - (.+) - Episode (\\d+) \\((.+)\\)", options: []),
+			else if let pattern = try? NSRegularExpression(pattern: "Download (.+) - (.+) - Episode (\\d+).+\\((.+)\\)", options: []),
 				let match = pattern.firstMatch(in: title, options: [], range: fullRange)
 			{
 				self.episodeType   = .drama
@@ -43,7 +52,10 @@ struct EpisodeInfo {
 				self.language      = Utility.substring(for: match, at: 4, in: title)
 			}
 			else {
-				return nil
+				self.episodeType  = .drama
+				self.englishTitle = title
+				self.episode      = ""
+				self.language     = "Cantonese"
 			}
 			
 		case .tvShow:
@@ -56,7 +68,10 @@ struct EpisodeInfo {
 				self.language     = Utility.substring(for: match, at: 3, in: title)
 			}
 			else {
-				return nil
+				self.episodeType  = .tvShow
+				self.englishTitle = title
+				self.episode      = ""
+				self.language     = "Cantonese"
 			}
 		}
 	}
