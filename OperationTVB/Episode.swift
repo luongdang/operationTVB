@@ -40,33 +40,6 @@ fileprivate struct Constants {
 	}()
 }
 
-enum EpisodeDownloadState : Equatable {
-	case notDownloaded
-	case scheduled(at: String?)
-	case starting
-	case downloading
-	case finished
-	case failed(error: String)
-	
-	static func == (lhs: EpisodeDownloadState, rhs: EpisodeDownloadState) -> Bool {
-		switch (lhs, rhs) {
-		case (.notDownloaded, .notDownloaded), (.scheduled, .scheduled), (.starting, .starting),
-		     (.downloading, .downloading), (.finished, finished), (.failed, .failed):
-		     return true
-		default:
-			return false
-		}
-	}
-	
-	var hasFailed: Bool {
-		switch self {
-		case .failed(error: _):
-			return true
-		default:
-			return false
-		}
-	}
-}
 
 @objcMembers
 class Episode : NSObject {

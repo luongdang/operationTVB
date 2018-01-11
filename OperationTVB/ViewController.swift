@@ -142,7 +142,7 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 			return FileManager.default.fileExists(atPath: expectedURL.path, isDirectory: &isDirectory) && !isDirectory.boolValue
 		}
 		
-		for episode in self.episodes {
+		for episode in self.episodes where episode.state == .notDownloaded {
 			let baseURLs = [self.saveLocation!] + Constants.baseURLs
 			
 			episode.state = baseURLs.reduce(EpisodeDownloadState.notDownloaded) {
