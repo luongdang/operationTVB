@@ -62,6 +62,10 @@ struct Utility {
 		}
 	}
 	
+	static func randBetween(range r: Range<Double>) -> Double {
+		return randBetween(lowerbound: r.lowerBound, upperbound: r.upperBound)
+	}
+	
 	static func timeFromNow(offset seconds: Double, formatter: DateFormatter = defaultDateFormatter) -> String {
 		return formatter.string(from: Date().addingTimeInterval(seconds))
 	}

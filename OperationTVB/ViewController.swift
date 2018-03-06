@@ -7,43 +7,39 @@
 //
 
 import Cocoa
-import WebKit
-import HTMLReader
 
 fileprivate struct Constants {
     /// Wait time before starting to download an episode
     static let waitTime = 0.0 ..< 60.0
     
     /// The maximum number of concurrent downloads
-    static let concurrentDownloads = 20
-
-	/// Default save location for HK Dramas
-	static let defaultHKDramaURL = URL(fileURLWithPath: "/Volumes/Macintosh HD/TVB Drama")
+    static let concurrentDownloads = 10
 	
-	/// Default save location for HK TV Shows
-	static let defaultHKShowURL = URL(fileURLWithPath: "/Volumes/Macintosh HD/HK Show")
+	/// Default download location
+	static let defaultDownloadURL = URL(fileURLWithPath: "/Volumes/video/(BitTorrent)/OperationTVB")
 	
 	/// Locations where the app will check for downloaded content
 	static let baseURLs = [
-		URL(fileURLWithPath: "/Volumes/Seagate Expansion/Big Data/TVB Drama"),
-		defaultHKDramaURL,
-		defaultHKShowURL,
+		defaultDownloadURL,
 		URL(fileURLWithPath: "/Volumes/video/TVB Drama"),
+		URL(fileURLWithPath: "/Volumes/video/TV Show - Hong Kong"),
+		URL(fileURLWithPath: "/Volumes/Seagate Expansion/Big Data/TVB Drama")
 	]
 }
 
+@objcMembers
 class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelegate, URLSessionDownloadDelegate {
 	@IBOutlet weak var episodeURLField: NSTextField!
 	@IBOutlet weak var tableView: NSTableView!
 	@IBOutlet weak var downloadLocationField: NSTextField!
-	
-	@IBOutlet var episodesArrayController: NSArrayController!
+	@IBOutlet weak var episodesArrayController: NSArrayController!
 	
 	@objc dynamic var episodes = [Episode]() {
 		didSet {
 			self.statisticsDidChange()
 		}
 	}
+	
 	@objc dynamic var statistics : String {
 		let finishedCount = episodes.filter({ $0.state == .finished }).count
 		let totalCount = episodes.count
@@ -76,7 +72,7 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 	// MARK: - Methods
 	override func viewDidLoad() {
 		super.viewDidLoad()
-		self.saveLocation = Constants.defaultHKDramaURL
+		self.saveLocation = Constants.defaultDownloadURL
 	}
 	
 	@IBAction func addEpisodes(_ sender: NSButton) {
@@ -123,6 +119,10 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 		} else {
 			Episode.downloadEpisodeList(from: url, progressHandler: progressHandler, completionHandler: completionHandler)
 		}
+	}
+	
+	@IBAction func revealDownloadLocation(_ sender: NSButton) {
+		NSWorkspace.shared.selectFile(nil, inFileViewerRootedAtPath: downloadLocationField.stringValue)
 	}
 	
 	@IBAction func cleanUp(_ sender: Any) {
@@ -207,7 +207,7 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 			episode.state = .scheduled(at: nil)
 			downloadQueue.async {
 				self.semaphore.wait()
-				let waitTime = Utility.randBetween(lowerbound: Constants.waitTime.lowerBound, upperbound: Constants.waitTime.upperBound)
+				let waitTime = Utility.randBetween(range: Constants.waitTime)
 				
 				episode.state = .scheduled(at: Utility.timeFromNow(offset: waitTime))
 				DispatchQueue.global(qos: .background).asyncAfter(deadline: .now() + waitTime) {

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="13529" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="14101" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="13529"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14101"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -712,7 +712,7 @@
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
                                 <connections>
-                                    <action selector="addEpisodes:" target="XfG-lQ-9wD" id="C8B-N1-icP"/>
+                                    <action selector="addEpisodes:" target="XfG-lQ-9wD" id="5Kt-dK-aXc"/>
                                 </connections>
                             </button>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="CC8-gB-Qm2">
@@ -724,7 +724,7 @@
                                 </textFieldCell>
                             </textField>
                             <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="d8g-Xc-Xze">
-                                <rect key="frame" x="112" y="335" width="476" height="22"/>
+                                <rect key="frame" x="112" y="335" width="400" height="22"/>
                                 <textFieldCell key="cell" lineBreakMode="truncatingMiddle" selectable="YES" editable="YES" enabled="NO" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="WKG-X9-IhY">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
@@ -741,7 +741,7 @@ DQ
 </string>
                                 </buttonCell>
                                 <connections>
-                                    <action selector="download:" target="XfG-lQ-9wD" id="fDF-Kv-jtC"/>
+                                    <action selector="download:" target="XfG-lQ-9wD" id="VfU-0B-3In"/>
                                 </connections>
                             </button>
                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="1Ms-hx-yTP">
@@ -751,7 +751,7 @@ DQ
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
                                 <connections>
-                                    <action selector="browseLocation:" target="XfG-lQ-9wD" id="xCe-1a-zOD"/>
+                                    <action selector="browseLocation:" target="XfG-lQ-9wD" id="MGH-QW-iws"/>
                                 </connections>
                             </button>
                             <scrollView autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Wlb-Qr-aql">
@@ -995,7 +995,7 @@ DQ
                                     <font key="font" metaFont="smallSystemBold"/>
                                 </buttonCell>
                                 <connections>
-                                    <action selector="cleanUp:" target="XfG-lQ-9wD" id="QaS-I5-S3l"/>
+                                    <action selector="cleanUp:" target="XfG-lQ-9wD" id="ZJB-L9-C5o"/>
                                 </connections>
                             </button>
                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Dye-HV-Axh">
@@ -1005,12 +1005,24 @@ DQ
                                     <font key="font" metaFont="smallSystemBold"/>
                                 </buttonCell>
                                 <connections>
-                                    <action selector="updateState:" target="XfG-lQ-9wD" id="Amx-oM-Nmz"/>
+                                    <action selector="updateState:" target="XfG-lQ-9wD" id="5md-8h-jJQ"/>
+                                </connections>
+                            </button>
+                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="uIA-FE-4vg">
+                                <rect key="frame" x="514" y="328" width="80" height="32"/>
+                                <buttonCell key="cell" type="push" title="Reveal" bezelStyle="rounded" alignment="center" borderStyle="border" inset="2" id="dg9-bN-9qw">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="revealDownloadLocation:" target="XfG-lQ-9wD" id="ttU-mS-itc"/>
                                 </connections>
                             </button>
                         </subviews>
                         <constraints>
+                            <constraint firstItem="uIA-FE-4vg" firstAttribute="leading" secondItem="d8g-Xc-Xze" secondAttribute="trailing" constant="8" id="5wm-Dh-uWg"/>
                             <constraint firstItem="03s-N4-Yce" firstAttribute="width" secondItem="1Ms-hx-yTP" secondAttribute="width" id="7Sf-UP-p4G"/>
+                            <constraint firstItem="uIA-FE-4vg" firstAttribute="baseline" secondItem="d8g-Xc-Xze" secondAttribute="baseline" id="97Y-Mx-VFC"/>
                             <constraint firstItem="03s-N4-Yce" firstAttribute="leading" secondItem="s1S-5i-ikJ" secondAttribute="trailing" constant="8" id="FDq-PD-pxj"/>
                             <constraint firstItem="Dye-HV-Axh" firstAttribute="leading" secondItem="AEs-B2-4P1" secondAttribute="trailing" constant="8" id="Hhs-7I-KkC"/>
                             <constraint firstItem="Wlb-Qr-aql" firstAttribute="top" secondItem="d8g-Xc-Xze" secondAttribute="bottom" constant="8" id="Kpj-KV-emV"/>
@@ -1024,7 +1036,6 @@ DQ
                             <constraint firstItem="d8g-Xc-Xze" firstAttribute="leading" secondItem="CC8-gB-Qm2" secondAttribute="trailing" constant="8" id="YH0-yB-I72"/>
                             <constraint firstItem="d8g-Xc-Xze" firstAttribute="leading" secondItem="s1S-5i-ikJ" secondAttribute="leading" id="bBX-oI-Zcf"/>
                             <constraint firstItem="Dye-HV-Axh" firstAttribute="baseline" secondItem="AEs-B2-4P1" secondAttribute="baseline" id="dEx-lV-eNz"/>
-                            <constraint firstItem="1Ms-hx-yTP" firstAttribute="leading" secondItem="d8g-Xc-Xze" secondAttribute="trailing" constant="8" id="ezl-RR-LU6"/>
                             <constraint firstItem="CC8-gB-Qm2" firstAttribute="baseline" secondItem="d8g-Xc-Xze" secondAttribute="baseline" id="fZ0-W0-3D7"/>
                             <constraint firstAttribute="trailing" secondItem="Wlb-Qr-aql" secondAttribute="trailing" constant="20" id="hzh-MW-7e4"/>
                             <constraint firstItem="03s-N4-Yce" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" constant="20" id="jds-lK-Zi4"/>
@@ -1035,6 +1046,7 @@ DQ
                             <constraint firstItem="Wlb-Qr-aql" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" constant="20" id="pNd-n4-Sop"/>
                             <constraint firstItem="1Ms-hx-yTP" firstAttribute="top" secondItem="03s-N4-Yce" secondAttribute="bottom" constant="6" id="pO6-8R-iQE"/>
                             <constraint firstAttribute="trailing" secondItem="1Ms-hx-yTP" secondAttribute="trailing" constant="20" id="pY3-wS-kVy"/>
+                            <constraint firstItem="1Ms-hx-yTP" firstAttribute="leading" secondItem="uIA-FE-4vg" secondAttribute="trailing" constant="8" id="pgk-up-FXN"/>
                             <constraint firstItem="s1S-5i-ikJ" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" constant="19" id="sys-Ge-5mm"/>
                             <constraint firstItem="AEs-B2-4P1" firstAttribute="leading" secondItem="rnq-mA-k0w" secondAttribute="trailing" constant="8" id="xtV-v3-mvx"/>
                             <constraint firstItem="d8g-Xc-Xze" firstAttribute="top" secondItem="s1S-5i-ikJ" secondAttribute="bottom" constant="6" id="zgc-ko-eyD"/>
