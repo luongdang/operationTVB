@@ -51,6 +51,14 @@ struct EpisodeInfo {
 				self.episode       = Utility.substring(for: match, at: 3, in: title)
 				self.language      = Utility.substring(for: match, at: 4, in: title)
 			}
+			else if let pattern = try? NSRegularExpression(pattern: "Download (.+) \\((.+)\\) - Episode (\\d+)", options: []),
+				let match = pattern.firstMatch(in: title, options: [], range: fullRange)
+			{
+				self.episodeType  = .drama
+				self.englishTitle = Utility.substring(for: match, at: 1, in: title)
+				self.episode      = Utility.substring(for: match, at: 3, in: title)
+				self.language     = Utility.substring(for: match, at: 2, in: title)
+			}
 			else {
 				self.episodeType  = .drama
 				self.englishTitle = title

@@ -703,7 +703,7 @@
                             </textField>
                             <slider verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="4rf-DG-Ifk">
                                 <rect key="frame" x="165" y="260" width="226" height="24"/>
-                                <sliderCell key="cell" state="on" alignment="left" minValue="1" maxValue="20" doubleValue="14.736842105263159" tickMarkPosition="below" numberOfTickMarks="20" allowsTickMarkValuesOnly="YES" sliderType="linear" id="gw8-fh-nfg"/>
+                                <sliderCell key="cell" state="on" alignment="left" minValue="1" maxValue="20" doubleValue="15" tickMarkPosition="below" numberOfTickMarks="20" allowsTickMarkValuesOnly="YES" sliderType="linear" id="gw8-fh-nfg"/>
                                 <connections>
                                     <binding destination="JDz-iF-fhL" name="value" keyPath="values.concurrentDownloads" id="xIf-5U-Igv"/>
                                 </connections>
