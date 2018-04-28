@@ -13,7 +13,7 @@ fileprivate struct Constants {
     static let waitTime = 0.0 ..< 60.0
     
     /// The maximum number of concurrent downloads
-    static let concurrentDownloads = 10
+    static let concurrentDownloads = 20
 	
 	/// Default download location
 	static let defaultDownloadURL = URL(fileURLWithPath: "/Volumes/video/(BitTorrent)/OperationTVB")
@@ -121,34 +121,18 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 		}
 	}
 	
-	@IBAction func revealDownloadLocation(_ sender: NSButton) {
-		NSWorkspace.shared.selectFile(nil, inFileViewerRootedAtPath: downloadLocationField.stringValue)
-	}
-	
 	@IBAction func cleanUp(_ sender: Any) {
 		self.episodes = episodes.filter { $0.state != .finished }
 	}
 	
 	@IBAction func updateState(_ sender : Any) {
-		func episodeExist(_ episode: Episode, at baseURL: URL) -> Bool {
-			var expectedURL = baseURL.appendingPathComponent(episode.preferredTitle)
-			
-			if let subfolder = episode.preferredSubfolder {
-				expectedURL.appendPathComponent(subfolder)
-			}
-			expectedURL.appendPathComponent("\(episode.preferredFilename).mp4")
-			
-			var isDirectory = ObjCBool(false)
-			return FileManager.default.fileExists(atPath: expectedURL.path, isDirectory: &isDirectory) && !isDirectory.boolValue
-		}
-		
 		for episode in self.episodes where episode.state == .notDownloaded {
 			let baseURLs = [self.saveLocation!] + Constants.baseURLs
 			
 			episode.state = baseURLs.reduce(EpisodeDownloadState.notDownloaded) {
 				if $0 == .finished {
 					return .finished
-				} else if episodeExist(episode, at: $1) {
+				} else if let _ = episodeLocation(episode, at: $1) {
 					return .finished
 				} else {
 					return .notDownloaded
@@ -174,6 +158,23 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 		DispatchQueue.main.async {
 			self.willChangeValue(forKey: "statistics")
 			self.didChangeValue(forKey: "statistics")
+		}
+	}
+	
+	@discardableResult
+	func episodeLocation(_ episode: Episode, at baseURL: URL) -> URL? {
+		var expectedURL = baseURL.appendingPathComponent(episode.preferredTitle)
+		
+		if let subfolder = episode.preferredSubfolder {
+			expectedURL.appendPathComponent(subfolder)
+		}
+		expectedURL.appendPathComponent("\(episode.preferredFilename).mp4")
+		
+		var isDirectory = ObjCBool(false)
+		if FileManager.default.fileExists(atPath: expectedURL.path, isDirectory: &isDirectory) && !isDirectory.boolValue {
+			return expectedURL
+		} else {
+			return nil
 		}
 	}
 	
@@ -278,3 +279,24 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 	}
 }
 
+extension ViewController: NSMenuDelegate {
+	override func validateMenuItem(_ menuItem: NSMenuItem) -> Bool {
+		if menuItem.action == #selector(ViewController.showInFinder(_:)) {
+			let epsiode = self.episodes[tableView.clickedRow]
+			return epsiode.state == .finished
+		}
+		return super.validateMenuItem(menuItem)
+	}
+	
+	@IBAction func showInFinder(_ sender: NSMenuItem) {
+		let baseURLs = [self.saveLocation!] + Constants.baseURLs
+		let episode = self.episodes[tableView.clickedRow]
+		
+		if episode.state == .finished,
+			let episodeLocation = baseURLs.compactMap({ episodeLocation(episode, at: $0) }).first
+		{
+			NSWorkspace.shared.selectFile(episodeLocation.path, inFileViewerRootedAtPath: "")
+		}
+		
+	}
+}

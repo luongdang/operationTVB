@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="14101" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="14109" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14101"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14109"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -23,7 +23,11 @@
                                             </connections>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="VOq-y0-SEH"/>
-                                        <menuItem title="Preferences…" keyEquivalent="," id="BOF-NM-1cW"/>
+                                        <menuItem title="Preferences…" keyEquivalent="," id="BOF-NM-1cW">
+                                            <connections>
+                                                <segue destination="sEP-Ca-SxZ" kind="show" id="C8p-Bq-K2Q"/>
+                                            </connections>
+                                        </menuItem>
                                         <menuItem isSeparatorItem="YES" id="wFC-TO-SCJ"/>
                                         <menuItem title="Services" id="NMo-om-nkz">
                                             <modifierMask key="keyEquivalentModifierMask"/>
@@ -681,6 +685,57 @@
             </objects>
             <point key="canvasLocation" x="75" y="250"/>
         </scene>
+        <!--Preference View Controller-->
+        <scene sceneID="IK1-yd-uwi">
+            <objects>
+                <viewController id="sEP-Ca-SxZ" customClass="PreferenceViewController" customModule="OperationTVB" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" id="kdB-If-Ksi">
+                        <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="toC-LI-KXv">
+                                <rect key="frame" x="18" y="263" width="143" height="17"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Concurrent Downloads" id="nrs-hh-C9d">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <slider verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="4rf-DG-Ifk">
+                                <rect key="frame" x="165" y="260" width="226" height="24"/>
+                                <sliderCell key="cell" state="on" alignment="left" minValue="1" maxValue="20" doubleValue="14.736842105263159" tickMarkPosition="below" numberOfTickMarks="20" allowsTickMarkValuesOnly="YES" sliderType="linear" id="gw8-fh-nfg"/>
+                                <connections>
+                                    <binding destination="JDz-iF-fhL" name="value" keyPath="values.concurrentDownloads" id="xIf-5U-Igv"/>
+                                </connections>
+                            </slider>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="iun-nf-2J5">
+                                <rect key="frame" x="395" y="263" width="37" height="17"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Label" id="lox-qn-EbH">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                                <connections>
+                                    <binding destination="JDz-iF-fhL" name="value" keyPath="values.concurrentDownloads" id="ub5-hM-dhq"/>
+                                </connections>
+                            </textField>
+                        </subviews>
+                        <constraints>
+                            <constraint firstItem="4rf-DG-Ifk" firstAttribute="leading" secondItem="toC-LI-KXv" secondAttribute="trailing" constant="8" symbolic="YES" id="3lQ-Fv-ZSx"/>
+                            <constraint firstItem="toC-LI-KXv" firstAttribute="centerY" secondItem="4rf-DG-Ifk" secondAttribute="centerY" id="55Y-F3-LLa"/>
+                            <constraint firstItem="toC-LI-KXv" firstAttribute="top" secondItem="kdB-If-Ksi" secondAttribute="top" constant="20" symbolic="YES" id="9si-k5-boW"/>
+                            <constraint firstItem="toC-LI-KXv" firstAttribute="leading" secondItem="kdB-If-Ksi" secondAttribute="leading" constant="20" symbolic="YES" id="Oup-eS-ft7"/>
+                            <constraint firstItem="iun-nf-2J5" firstAttribute="leading" secondItem="4rf-DG-Ifk" secondAttribute="trailing" constant="8" symbolic="YES" id="S1q-ZK-tFx"/>
+                            <constraint firstItem="iun-nf-2J5" firstAttribute="baseline" secondItem="toC-LI-KXv" secondAttribute="baseline" id="aMN-b9-eky"/>
+                            <constraint firstAttribute="trailing" secondItem="iun-nf-2J5" secondAttribute="trailing" constant="20" symbolic="YES" id="ziH-9r-su4"/>
+                        </constraints>
+                    </view>
+                </viewController>
+                <customObject id="U9g-nd-iOc" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+                <userDefaultsController representsSharedInstance="YES" id="JDz-iF-fhL"/>
+            </objects>
+            <point key="canvasLocation" x="716" y="697"/>
+        </scene>
         <!--View Controller-->
         <scene sceneID="hIz-AP-VOD">
             <objects>
@@ -724,7 +779,7 @@
                                 </textFieldCell>
                             </textField>
                             <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="d8g-Xc-Xze">
-                                <rect key="frame" x="112" y="335" width="400" height="22"/>
+                                <rect key="frame" x="112" y="335" width="476" height="22"/>
                                 <textFieldCell key="cell" lineBreakMode="truncatingMiddle" selectable="YES" editable="YES" enabled="NO" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="WKG-X9-IhY">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
@@ -960,6 +1015,7 @@ DQ
                                                 <binding destination="OEc-Og-DPy" name="content" keyPath="arrangedObjects" id="cDg-BL-yJo"/>
                                                 <binding destination="OEc-Og-DPy" name="selectionIndexes" keyPath="selectionIndexes" previousBinding="cDg-BL-yJo" id="78a-hW-jsj"/>
                                                 <binding destination="OEc-Og-DPy" name="sortDescriptors" keyPath="sortDescriptors" previousBinding="78a-hW-jsj" id="WV8-cE-id4"/>
+                                                <outlet property="menu" destination="ibx-8M-nFj" id="BTl-oT-sm5"/>
                                             </connections>
                                         </tableView>
                                     </subviews>
@@ -1008,21 +1064,10 @@ DQ
                                     <action selector="updateState:" target="XfG-lQ-9wD" id="5md-8h-jJQ"/>
                                 </connections>
                             </button>
-                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="uIA-FE-4vg">
-                                <rect key="frame" x="514" y="328" width="80" height="32"/>
-                                <buttonCell key="cell" type="push" title="Reveal" bezelStyle="rounded" alignment="center" borderStyle="border" inset="2" id="dg9-bN-9qw">
-                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                    <font key="font" metaFont="system"/>
-                                </buttonCell>
-                                <connections>
-                                    <action selector="revealDownloadLocation:" target="XfG-lQ-9wD" id="ttU-mS-itc"/>
-                                </connections>
-                            </button>
                         </subviews>
                         <constraints>
-                            <constraint firstItem="uIA-FE-4vg" firstAttribute="leading" secondItem="d8g-Xc-Xze" secondAttribute="trailing" constant="8" id="5wm-Dh-uWg"/>
                             <constraint firstItem="03s-N4-Yce" firstAttribute="width" secondItem="1Ms-hx-yTP" secondAttribute="width" id="7Sf-UP-p4G"/>
-                            <constraint firstItem="uIA-FE-4vg" firstAttribute="baseline" secondItem="d8g-Xc-Xze" secondAttribute="baseline" id="97Y-Mx-VFC"/>
+                            <constraint firstItem="1Ms-hx-yTP" firstAttribute="leading" secondItem="d8g-Xc-Xze" secondAttribute="trailing" constant="8" id="EHR-SX-Snl"/>
                             <constraint firstItem="03s-N4-Yce" firstAttribute="leading" secondItem="s1S-5i-ikJ" secondAttribute="trailing" constant="8" id="FDq-PD-pxj"/>
                             <constraint firstItem="Dye-HV-Axh" firstAttribute="leading" secondItem="AEs-B2-4P1" secondAttribute="trailing" constant="8" id="Hhs-7I-KkC"/>
                             <constraint firstItem="Wlb-Qr-aql" firstAttribute="top" secondItem="d8g-Xc-Xze" secondAttribute="bottom" constant="8" id="Kpj-KV-emV"/>
@@ -1046,7 +1091,6 @@ DQ
                             <constraint firstItem="Wlb-Qr-aql" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" constant="20" id="pNd-n4-Sop"/>
                             <constraint firstItem="1Ms-hx-yTP" firstAttribute="top" secondItem="03s-N4-Yce" secondAttribute="bottom" constant="6" id="pO6-8R-iQE"/>
                             <constraint firstAttribute="trailing" secondItem="1Ms-hx-yTP" secondAttribute="trailing" constant="20" id="pY3-wS-kVy"/>
-                            <constraint firstItem="1Ms-hx-yTP" firstAttribute="leading" secondItem="uIA-FE-4vg" secondAttribute="trailing" constant="8" id="pgk-up-FXN"/>
                             <constraint firstItem="s1S-5i-ikJ" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" constant="19" id="sys-Ge-5mm"/>
                             <constraint firstItem="AEs-B2-4P1" firstAttribute="leading" secondItem="rnq-mA-k0w" secondAttribute="trailing" constant="8" id="xtV-v3-mvx"/>
                             <constraint firstItem="d8g-Xc-Xze" firstAttribute="top" secondItem="s1S-5i-ikJ" secondAttribute="bottom" constant="6" id="zgc-ko-eyD"/>
@@ -1060,6 +1104,16 @@ DQ
                     </connections>
                 </viewController>
                 <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+                <menu title="Table View Menu" id="ibx-8M-nFj">
+                    <items>
+                        <menuItem title="Show in Finder" enabled="NO" id="NwI-7a-ziH" userLabel="Show in Finder">
+                            <modifierMask key="keyEquivalentModifierMask"/>
+                            <connections>
+                                <action selector="showInFinder:" target="XfG-lQ-9wD" id="tnb-uK-QPg"/>
+                            </connections>
+                        </menuItem>
+                    </items>
+                </menu>
                 <arrayController objectClassName="Episode" automaticallyRearrangesObjects="YES" id="OEc-Og-DPy" userLabel="Episodes Array Controller">
                     <connections>
                         <binding destination="XfG-lQ-9wD" name="contentArray" keyPath="self.episodes" id="3QY-Nw-xxt"/>

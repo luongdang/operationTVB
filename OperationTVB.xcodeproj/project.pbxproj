@@ -16,6 +16,8 @@
 		7E63D7311F959A48003B8761 /* EpisodeInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E63D7301F959A48003B8761 /* EpisodeInfo.swift */; };
 		7E63D7331F95A23F003B8761 /* TestUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E63D7321F95A23F003B8761 /* TestUtility.swift */; };
 		7E63D7361F95A514003B8761 /* TestEpisodeInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E63D7351F95A514003B8761 /* TestEpisodeInfo.swift */; };
+		7E6E5F642093CD25005EBA20 /* Preferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E6E5F632093CD25005EBA20 /* Preferences.swift */; };
+		7E6E5F662093CFF1005EBA20 /* PreferenceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E6E5F652093CFF1005EBA20 /* PreferenceViewController.swift */; };
 		7E83AFC61EC92AF20052402D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E83AFC51EC92AF20052402D /* AppDelegate.swift */; };
 		7E83AFC81EC92AF20052402D /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E83AFC71EC92AF20052402D /* ViewController.swift */; };
 		7E83AFCA1EC92AF20052402D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7E83AFC91EC92AF20052402D /* Assets.xcassets */; };
@@ -55,6 +57,8 @@
 		7E63D7301F959A48003B8761 /* EpisodeInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EpisodeInfo.swift; sourceTree = "<group>"; };
 		7E63D7321F95A23F003B8761 /* TestUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestUtility.swift; sourceTree = "<group>"; };
 		7E63D7351F95A514003B8761 /* TestEpisodeInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestEpisodeInfo.swift; sourceTree = "<group>"; };
+		7E6E5F632093CD25005EBA20 /* Preferences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Preferences.swift; sourceTree = "<group>"; };
+		7E6E5F652093CFF1005EBA20 /* PreferenceViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PreferenceViewController.swift; path = OperationTVB/PreferenceViewController.swift; sourceTree = "<group>"; };
 		7E83AFC21EC92AF20052402D /* OperationTVB.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OperationTVB.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7E83AFC51EC92AF20052402D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		7E83AFC71EC92AF20052402D /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -125,6 +129,7 @@
 		7E83AFB91EC92AF20052402D = {
 			isa = PBXGroup;
 			children = (
+				7E6E5F652093CFF1005EBA20 /* PreferenceViewController.swift */,
 				7E00BDDD1F40C092008B1B4C /* Assets */,
 				7E83AFC41EC92AF20052402D /* OperationTVB */,
 				7E83AFD61EC92AF20052402D /* OperationTVBTests */,
@@ -158,6 +163,7 @@
 				7E83AFC71EC92AF20052402D /* ViewController.swift */,
 				7E63D7301F959A48003B8761 /* EpisodeInfo.swift */,
 				7E5FC1E71FF160110046DADA /* EpisodeDownloadState.swift */,
+				7E6E5F632093CD25005EBA20 /* Preferences.swift */,
 			);
 			path = OperationTVB;
 			sourceTree = "<group>";
@@ -504,12 +510,14 @@
 			files = (
 				7E83AFC81EC92AF20052402D /* ViewController.swift in Sources */,
 				7E10703F1ECB0AED00AF5A0E /* HTMLNodeExtension.swift in Sources */,
+				7E6E5F642093CD25005EBA20 /* Preferences.swift in Sources */,
 				7E5FC1E81FF160110046DADA /* EpisodeDownloadState.swift in Sources */,
 				7EDFB1B91ECF8D570036AD33 /* FileManagerExtension.swift in Sources */,
 				7E83AFF21EC93FDD0052402D /* Episode.swift in Sources */,
 				7E1070411ECB0E2E00AF5A0E /* ProgressCellView.swift in Sources */,
 				7EE5E0551ECA6A9000B12442 /* Utility.swift in Sources */,
 				7E83AFC61EC92AF20052402D /* AppDelegate.swift in Sources */,
+				7E6E5F662093CFF1005EBA20 /* PreferenceViewController.swift in Sources */,
 				7E63D7311F959A48003B8761 /* EpisodeInfo.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
