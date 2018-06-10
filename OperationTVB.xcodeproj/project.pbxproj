@@ -154,18 +154,18 @@
 		7E83AFC41EC92AF20052402D /* OperationTVB */ = {
 			isa = PBXGroup;
 			children = (
-				7E6E5F652093CFF1005EBA20 /* PreferenceViewController.swift */,
-				7E5372001F92F36A00769481 /* Resources */,
 				7E83AFC51EC92AF20052402D /* AppDelegate.swift */,
 				7E83AFF11EC93FDD0052402D /* Episode.swift */,
+				7E5FC1E71FF160110046DADA /* EpisodeDownloadState.swift */,
+				7E63D7301F959A48003B8761 /* EpisodeInfo.swift */,
 				7EDFB1B81ECF8D570036AD33 /* FileManagerExtension.swift */,
 				7E10703E1ECB0AED00AF5A0E /* HTMLNodeExtension.swift */,
+				7E6E5F632093CD25005EBA20 /* Preferences.swift */,
+				7E6E5F652093CFF1005EBA20 /* PreferenceViewController.swift */,
 				7E1070401ECB0E2E00AF5A0E /* ProgressCellView.swift */,
+				7E5372001F92F36A00769481 /* Resources */,
 				7EE5E0541ECA6A9000B12442 /* Utility.swift */,
 				7E83AFC71EC92AF20052402D /* ViewController.swift */,
-				7E63D7301F959A48003B8761 /* EpisodeInfo.swift */,
-				7E5FC1E71FF160110046DADA /* EpisodeDownloadState.swift */,
-				7E6E5F632093CD25005EBA20 /* Preferences.swift */,
 			);
 			path = OperationTVB;
 			sourceTree = "<group>";
@@ -286,20 +286,19 @@
 					7E83AFC11EC92AF20052402D = {
 						CreatedOnToolsVersion = 8.3.2;
 						DevelopmentTeam = 5EVPF55NCY;
-						LastSwiftMigration = 0900;
+						LastSwiftMigration = "";
 						ProvisioningStyle = Automatic;
 					};
 					7E83AFD21EC92AF20052402D = {
 						CreatedOnToolsVersion = 8.3.2;
 						DevelopmentTeam = 5EVPF55NCY;
-						LastSwiftMigration = 0900;
+						LastSwiftMigration = "";
 						ProvisioningStyle = Automatic;
 						TestTargetID = 7E83AFC11EC92AF20052402D;
 					};
 					7E83AFDD1EC92AF20052402D = {
 						CreatedOnToolsVersion = 8.3.2;
-						DevelopmentTeam = 5EVPF55NCY;
-						LastSwiftMigration = 0900;
+						LastSwiftMigration = "";
 						ProvisioningStyle = Automatic;
 						TestTargetID = 7E83AFC11EC92AF20052402D;
 					};
@@ -613,7 +612,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 			};
 			name = Debug;
 		};
@@ -632,7 +631,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 			};
 			name = Release;
 		};
@@ -651,7 +650,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = LDResearch.OperationTVBTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/OperationTVB.app/Contents/MacOS/OperationTVB";
 			};
 			name = Debug;
@@ -671,7 +670,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = LDResearch.OperationTVBTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/OperationTVB.app/Contents/MacOS/OperationTVB";
 			};
 			name = Release;
@@ -682,14 +681,16 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = 5EVPF55NCY;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = OperationTVBUITests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = LDResearch.OperationTVBUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_SWIFT3_OBJC_INFERENCE = On;
-				SWIFT_VERSION = 4.0;
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_VERSION = 4.2;
 				TEST_TARGET_NAME = OperationTVB;
 			};
 			name = Debug;
@@ -700,14 +701,16 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = 5EVPF55NCY;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = OperationTVBUITests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = LDResearch.OperationTVBUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_SWIFT3_OBJC_INFERENCE = On;
-				SWIFT_VERSION = 4.0;
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_VERSION = 4.2;
 				TEST_TARGET_NAME = OperationTVB;
 			};
 			name = Release;
