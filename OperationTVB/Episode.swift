@@ -28,6 +28,7 @@ fileprivate struct Constants {
 			webView = WKWebView(frame: .zero)
 			webView.customUserAgent = Constants.userAgent
 		}
+		
 		return webView
 	}()
 	
@@ -41,8 +42,7 @@ fileprivate struct Constants {
 }
 
 
-@objcMembers
-class Episode : NSObject {
+@objcMembers class Episode : NSObject {
 	var type: EpisodeType
 	var title: String
 	var chineseTitle: String?
@@ -215,9 +215,8 @@ class Episode : NSObject {
 			
 			DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
 				webView.evaluateJavaScript("document.documentElement.outerHTML") { result, error in
-					defer {
-						Constants.webViewSemaphore.signal()
-					}
+					defer { Constants.webViewSemaphore.signal() }
+					
 					guard error == nil else {
 						self.forward(error: error, whileLoadingURL: self.url)
 						return
@@ -229,30 +228,126 @@ class Episode : NSObject {
 					}
 					
 					let document = HTMLDocument(string: htmlString)
-					let picasaAnchor = document.firstNode(matchingSelector: "a", withContent: "Picasaweb 720p") ??
-										document.firstNode(matchingSelector: "a", withContent: "Picasaweb 360p")
-					if picasaAnchor == nil {
-						let error = NSError(domain: Constants.errorDomain, code: 1, userInfo: [NSLocalizedDescriptionKey: "No Picasa link"])
+//					let picasaAnchor = document.firstNode(matchingSelector: "a", withContent: "Picasaweb 720p") ??
+//										document.firstNode(matchingSelector: "a", withContent: "Picasaweb 360p")
+//					if picasaAnchor == nil {
+//						let error = NSError(domain: Constants.errorDomain, code: 1, userInfo: [NSLocalizedDescriptionKey: "No Picasa link"])
+//						self.forward(error: error, whileLoadingURL: self.url)
+//						return
+//					}
+					
+					guard let openloadAnchor = document.firstNode(matchingSelector: "a", withContent: "Openload") else {
+						let error = NSError(domain: Constants.errorDomain, code: 1, userInfo: [NSLocalizedDescriptionKey: "No Openload link"])
 						self.forward(error: error, whileLoadingURL: self.url)
 						return
 					}
+					guard let href = openloadAnchor.attributes["href"], let openloadURL = URL(string: href) else {
+						let error = self.makeError(message: "Invalid Openload URL")
+						self.forward(error: error, whileLoadingURL: URL(string: "http://invalid")!)
+						return
+					}
 					
-					let href = picasaAnchor!.attributes["href"]!
-					self.loadPage2(href: href)
+					DispatchQueue.global().async {
+						self.loadPage2(in: webView, url: openloadURL)
+					}
 				}
 			}
 		}
 	}
 	
-	private func loadPage2(href: String) {
+	private func loadPage2(in webView: WKWebView, url: URL) {
+		let request = Utility.makeRequest(with: url)
+		
+		Constants.webViewSemaphore.wait()
+		DispatchQueue.main.async {
+			webView.load(request)
+			
+			DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+				defer { Constants.webViewSemaphore.signal() }
+				
+				guard let openloadURL = webView.url, let components = URLComponents(url: openloadURL, resolvingAgainstBaseURL: true),
+					components.host == "openload.co" else
+				{
+					let error = self.makeError(message: "Did ot redirect to Openload")
+					self.forward(error: error, whileLoadingURL: url)
+					return
+				}
+				
+				DispatchQueue.global().async {
+					self.loadPage3(in: webView, url: openloadURL)
+				}
+			}
+		}
+	}
+		
+	private func loadPage3(in webView: WKWebView, url: URL) {
+		guard var components = URLComponents(string: "https://9xbuddy.com/process") else {
+			let error = self.makeError(message: "Cannot construct 9xbuddy link")
+			self.forward(error: error, whileLoadingURL: url)
+			return
+		}
+		
+		components.queryItems = [
+			URLQueryItem(name: "url", value: url.absoluteString)
+		]
+		print(components.url!)
+		
+		let request = Utility.makeRequest(with: components.url!)
+		Constants.webViewSemaphore.wait()
+		DispatchQueue.main.async {
+			webView.load(request)
+			
+			DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) {
+				webView.evaluateJavaScript("document.getElementsByTagName('a')") { result, error in
+					defer { Constants.webViewSemaphore.signal() }
+					
+					guard error == nil else {
+						self.forward(error: error, whileLoadingURL: self.url)
+						return
+					}
+					guard let htmlString = result as? String else {
+						let error = NSError(domain: Constants.errorDomain, code: 1, userInfo: [NSLocalizedDescriptionKey: "Cannot extract HTML string"])
+						self.forward(error: error, whileLoadingURL: self.url)
+						return
+					}
+					
+					let document = HTMLDocument(string: htmlString)
+					
+					// FIXME: Remove this block
+					let outputURL = FileManager.default.urls(for: .desktopDirectory, in: .userDomainMask).first!.appendingPathComponent("document.html")
+					try! document.innerHTML.write(to: outputURL, atomically: true, encoding: .utf8)
+					//
+					
+					guard let downloadNowAnchor = document.firstNode(matchingSelector: "a", withContent: "Download Now"),
+						let href = downloadNowAnchor.attributes["href"],
+						let videoURL = URL(string: href) else
+					{
+						let error = self.makeError(message: "Cannot get link to Openload video")
+						self.forward(error: error, whileLoadingURL: url)
+						return
+					}
+					
+					DispatchQueue.global().async {
+						self.downloadVideo(url: videoURL)
+					}
+				}
+			}
+		}
+	}
+			
+	private func downloadVideo(url: URL) {
 		let session = URLSession(configuration: .default, delegate: self.downloadDelegate, delegateQueue: nil)
-		let request = Utility.makeRequest(with: href)
+		let request = Utility.makeRequest(with: url)
 		
 		let task = session.downloadTask(with: request)
 		task.taskDescription = self.description
 		task.resume()
 		
 		self.state = .downloading
+	}
+	
+	private func makeError(message: String) -> NSError {
+		return NSError(domain: Constants.errorDomain, code: 1, userInfo: [NSLocalizedDescriptionKey: message])
 	}
 	
 	private func forward(error: Error?, whileLoadingURL url: URL) {

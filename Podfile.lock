@@ -1,12 +1,16 @@
 PODS:
-  - HTMLReader (2.1.1)
+  - HTMLReader (2.1.2)
 
 DEPENDENCIES:
   - HTMLReader
 
+SPEC REPOS:
+  https://github.com/CocoaPods/Specs.git:
+    - HTMLReader
+
 SPEC CHECKSUMS:
-  HTMLReader: 311dd8a7f6a15dd815977f8e963dff4588a1ba05
+  HTMLReader: cad0d4329e1966f769758a23dbc811b60b807819
 
 PODFILE CHECKSUM: f3fc4e29d48f1600ac800d1f930c2b363fcf3d0d
 
-COCOAPODS: 1.4.0
+COCOAPODS: 1.5.0

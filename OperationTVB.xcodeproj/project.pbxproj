@@ -24,6 +24,7 @@
 		7E83AFCD1EC92AF20052402D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7E83AFCB1EC92AF20052402D /* Main.storyboard */; };
 		7E83AFE31EC92AF20052402D /* OperationTVBUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E83AFE21EC92AF20052402D /* OperationTVBUITests.swift */; };
 		7E83AFF21EC93FDD0052402D /* Episode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E83AFF11EC93FDD0052402D /* Episode.swift */; };
+		7E914FED20CD59ED00CA0B38 /* TestEpisode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E914FEC20CD59ED00CA0B38 /* TestEpisode.swift */; };
 		7EDFB1B91ECF8D570036AD33 /* FileManagerExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EDFB1B81ECF8D570036AD33 /* FileManagerExtension.swift */; };
 		7EE5E0551ECA6A9000B12442 /* Utility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EE5E0541ECA6A9000B12442 /* Utility.swift */; };
 /* End PBXBuildFile section */
@@ -58,7 +59,7 @@
 		7E63D7321F95A23F003B8761 /* TestUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestUtility.swift; sourceTree = "<group>"; };
 		7E63D7351F95A514003B8761 /* TestEpisodeInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestEpisodeInfo.swift; sourceTree = "<group>"; };
 		7E6E5F632093CD25005EBA20 /* Preferences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Preferences.swift; sourceTree = "<group>"; };
-		7E6E5F652093CFF1005EBA20 /* PreferenceViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PreferenceViewController.swift; path = OperationTVB/PreferenceViewController.swift; sourceTree = "<group>"; };
+		7E6E5F652093CFF1005EBA20 /* PreferenceViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceViewController.swift; sourceTree = "<group>"; };
 		7E83AFC21EC92AF20052402D /* OperationTVB.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OperationTVB.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7E83AFC51EC92AF20052402D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		7E83AFC71EC92AF20052402D /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -71,6 +72,7 @@
 		7E83AFE21EC92AF20052402D /* OperationTVBUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationTVBUITests.swift; sourceTree = "<group>"; };
 		7E83AFE41EC92AF20052402D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7E83AFF11EC93FDD0052402D /* Episode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Episode.swift; sourceTree = "<group>"; };
+		7E914FEC20CD59ED00CA0B38 /* TestEpisode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestEpisode.swift; sourceTree = "<group>"; };
 		7EDFB1B81ECF8D570036AD33 /* FileManagerExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FileManagerExtension.swift; sourceTree = "<group>"; };
 		7EE5E0541ECA6A9000B12442 /* Utility.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utility.swift; sourceTree = "<group>"; };
 		9A16C9E149766E1DEB293853 /* Pods-OperationTVB.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OperationTVB.release.xcconfig"; path = "Pods/Target Support Files/Pods-OperationTVB/Pods-OperationTVB.release.xcconfig"; sourceTree = "<group>"; };
@@ -129,7 +131,6 @@
 		7E83AFB91EC92AF20052402D = {
 			isa = PBXGroup;
 			children = (
-				7E6E5F652093CFF1005EBA20 /* PreferenceViewController.swift */,
 				7E00BDDD1F40C092008B1B4C /* Assets */,
 				7E83AFC41EC92AF20052402D /* OperationTVB */,
 				7E83AFD61EC92AF20052402D /* OperationTVBTests */,
@@ -153,6 +154,7 @@
 		7E83AFC41EC92AF20052402D /* OperationTVB */ = {
 			isa = PBXGroup;
 			children = (
+				7E6E5F652093CFF1005EBA20 /* PreferenceViewController.swift */,
 				7E5372001F92F36A00769481 /* Resources */,
 				7E83AFC51EC92AF20052402D /* AppDelegate.swift */,
 				7E83AFF11EC93FDD0052402D /* Episode.swift */,
@@ -174,6 +176,7 @@
 				7E83AFD91EC92AF20052402D /* Info.plist */,
 				7E63D7321F95A23F003B8761 /* TestUtility.swift */,
 				7E63D7351F95A514003B8761 /* TestEpisodeInfo.swift */,
+				7E914FEC20CD59ED00CA0B38 /* TestEpisode.swift */,
 			);
 			path = OperationTVBTests;
 			sourceTree = "<group>";
@@ -222,7 +225,6 @@
 				7E83AFBF1EC92AF20052402D /* Frameworks */,
 				7E83AFC01EC92AF20052402D /* Resources */,
 				398FF496C014F81B9F2C7FB8 /* [CP] Embed Pods Frameworks */,
-				AD9C2CCE6A46101B1DF2064E /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -241,8 +243,6 @@
 				7E83AFCF1EC92AF20052402D /* Sources */,
 				7E83AFD01EC92AF20052402D /* Frameworks */,
 				7E83AFD11EC92AF20052402D /* Resources */,
-				E8610DF5FB23984D8499C4B6 /* [CP] Embed Pods Frameworks */,
-				7E416D91DD03B58490450688 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -262,8 +262,6 @@
 				7E83AFDA1EC92AF20052402D /* Sources */,
 				7E83AFDB1EC92AF20052402D /* Frameworks */,
 				7E83AFDC1EC92AF20052402D /* Resources */,
-				652B392FEFAA501F0609C4E2 /* [CP] Embed Pods Frameworks */,
-				4AC5E6CC9F83C1A184FEAFE8 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -372,21 +370,6 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-OperationTVB/Pods-OperationTVB-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		4AC5E6CC9F83C1A184FEAFE8 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-OperationTVBUITests/Pods-OperationTVBUITests-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		56A1E6453E0414C6F740E45B /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -405,51 +388,6 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		652B392FEFAA501F0609C4E2 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-OperationTVBUITests/Pods-OperationTVBUITests-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		7E416D91DD03B58490450688 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-OperationTVBTests/Pods-OperationTVBTests-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		AD9C2CCE6A46101B1DF2064E /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-OperationTVB/Pods-OperationTVB-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		B7AAEEFF6C7A10609BFC2DAD /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -466,21 +404,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		E8610DF5FB23984D8499C4B6 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-OperationTVBTests/Pods-OperationTVBTests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		F7BD42202F13A831F5F3C2CD /* [CP] Check Pods Manifest.lock */ = {
@@ -528,6 +451,7 @@
 			files = (
 				7E63D7331F95A23F003B8761 /* TestUtility.swift in Sources */,
 				7E63D7361F95A514003B8761 /* TestEpisodeInfo.swift in Sources */,
+				7E914FED20CD59ED00CA0B38 /* TestEpisode.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

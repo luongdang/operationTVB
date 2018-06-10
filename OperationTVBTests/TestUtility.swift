@@ -35,5 +35,6 @@ class TestUtility: XCTestCase {
 		let headers2 = request2.allHTTPHeaderFields!
 		XCTAssert(request2.url?.absoluteString == urlString)
 		XCTAssert(headers2["User-Agent"]! == userAgent)
-	}
+	}	
 }
+

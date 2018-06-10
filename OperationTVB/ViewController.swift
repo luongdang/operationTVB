@@ -10,10 +10,12 @@ import Cocoa
 
 fileprivate struct Constants {
     /// Wait time before starting to download an episode
-    static let waitTime = 0.0 ..< 60.0
+	/// FIXME: Change back to 0.0 ..< 60.0
+    static let waitTime = 0.0 ..< 1.0
     
     /// The maximum number of concurrent downloads
-    static let concurrentDownloads = 20
+	// FIXME: Change back to 20
+    static let concurrentDownloads = 1
 	
 	/// Default download location
 	static let defaultDownloadURL = URL(fileURLWithPath: "/Volumes/video/(BitTorrent)/OperationTVB")
@@ -181,18 +183,18 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 	
 	// MARK: - Keyboard Events
 	override func keyDown(with event: NSEvent) {
-		interpretKeyEvents([event])
+		super.interpretKeyEvents([event])
 	}
 	
 	override func deleteForward(_ sender: Any?) {
-		deleteSelectedRows()
+		deleteSelectedRows(self)
 	}
 	
 	override func deleteBackward(_ sender: Any?) {
-		deleteSelectedRows()
+		deleteSelectedRows(self)
 	}
 	
-	private func deleteSelectedRows() {
+	@IBAction func deleteSelectedRows(_ sender: Any?) {
 		if let selectedRows = episodesArrayController.selectedObjects {
 			episodesArrayController.remove(contentsOf: selectedRows)
 		}
