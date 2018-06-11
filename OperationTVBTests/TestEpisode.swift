@@ -10,7 +10,14 @@ import XCTest
 @testable import OperationTVB
 
 class TestEpisode: XCTestCase {
-
+	let windowController: NSWindowController = {
+		return NSStoryboard(name: "Main", bundle: nil).instantiateController(withIdentifier: "webViewWindowController") as! NSWindowController
+	}()
+	
+	lazy var webViewController: WebViewController = {
+		return windowController.contentViewController as! WebViewController
+	}()
+		
     override func setUp() {
         super.setUp()
     }
@@ -21,34 +28,15 @@ class TestEpisode: XCTestCase {
 	
 	func test1() {
 		let episode = Episode(title: "Flying Tiger - 飛虎之潛行極戰", href: "http://videobug.se/v/A7vSTRTN7-N10xujCV87DQ?download=1", episodeType: .drama)!
-		episode.download(delegate: self)
-	}
-
-	func test2() {
-		let url = URL(string: "http://videobug.se/v/A7vSTRTN7-N10xujCV87DQ?download=1")!
-		let group = DispatchGroup()
+		windowController.showWindow(self)
 		
+		let group = DispatchGroup()
 		group.enter()
-		URLSession.shared.dataTask(with: url) { data, response, error in
+		webViewController.getVideoURL(for: episode) { (error, url) in
 			defer { group.leave() }
-			guard error == nil else {
-				XCTFail(error!.localizedDescription)
-				return
-			}
-			guard let data = data else {
-				XCTFail("Data is empty")
-				return
-			}
-			
-			let outputURL = FileManager.default.urls(for: .desktopDirectory, in: .userDomainMask).first!.appendingPathComponent("data.html")
-			try! data.write(to: outputURL, options: .atomic)
-		}.resume()
+			print("Hello world")
+		}
 		group.wait()
 	}
 }
 
-extension TestEpisode: URLSessionDownloadDelegate {
-	func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {
-		print(location)
-	}
-}

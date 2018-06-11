@@ -7,8 +7,13 @@
 //
 
 import XCTest
+@testable import OperationTVB
 
 class OperationTVBUITests: XCTestCase {
+//	lazy var appDelegate = (NSApp.delegate as! AppDelegate)
+//	lazy var webViewWindowController: NSWindowController = self.appDelegate.webViewWindowController
+//	lazy var webViewController: WebViewController = self.webViewWindowController.contentViewController as! WebViewController
+	
         
     override func setUp() {
         super.setUp()
@@ -28,9 +33,23 @@ class OperationTVBUITests: XCTestCase {
         super.tearDown()
     }
     
-    func testExample() {
-        // Use recording to get started writing UI tests.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-    }
-    
+	func test1() {
+		let app = XCUIApplication()
+		app.launch()
+		
+		// Show WebView Debugger window
+		app.typeKey("d", modifierFlags: .command)
+		let debuggerWindow = app.windows["WebView Debugger"].firstMatch
+		XCTAssertTrue(debuggerWindow.exists)
+		
+		
+		// Show main window
+		let mainWindow = app.windows["Operation TVB"].firstMatch
+		let episodeURLField = mainWindow.textFields["episodeURLField"].firstMatch
+		episodeURLField.typeText("http://icdrama.se/hk-drama/3774-flying-tiger/")
+		
+		mainWindow.buttons["Add"].click()
+		sleep(2)
+	}
+	
 }

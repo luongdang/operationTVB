@@ -36,6 +36,13 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 	@IBOutlet weak var downloadLocationField: NSTextField!
 	@IBOutlet weak var episodesArrayController: NSArrayController!
 	
+	var appDelegate: AppDelegate {
+		return NSApp.delegate as! AppDelegate
+	}
+	var webViewController: WebViewController {
+		return appDelegate.webViewWindowController.contentViewController as! WebViewController
+	}
+	
 	@objc dynamic var episodes = [Episode]() {
 		didSet {
 			self.statisticsDidChange()

@@ -10,8 +10,9 @@ import Cocoa
 
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate {
-
-
+	var webViewWindowController: NSWindowController = {
+		return NSStoryboard(name: "Main", bundle: nil).instantiateController(withIdentifier: "webViewWindowController") as! NSWindowController
+	}()
 
 	func applicationDidFinishLaunching(_ aNotification: Notification) {
 		// Insert code here to initialize your application
@@ -21,6 +22,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 		// Insert code here to tear down your application
 	}
 
-
+	@IBAction func showWebViewWindow(_ sender: Any) {
+		webViewWindowController.showWindow(self)
+	}
 }
 
