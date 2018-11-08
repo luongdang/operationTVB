@@ -11,18 +11,18 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
-         contextName = "closure #1 in closure #1 in closure #1 in Episode.loadPage3(in:url:):Episode.swift">
-         <PersistentStrings>
-            <PersistentString
-               value = "document.nodes(matchingSelector: &quot;a&quot;)">
-            </PersistentString>
-         </PersistentStrings>
-      </ContextState>
-      <ContextState
          contextName = "closure #1 in closure #1 in ViewController.addEpisodes(_:):ViewController.swift">
          <PersistentStrings>
             <PersistentString
                value = "episodes[0]">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "closure #1 in closure #1 in closure #1 in Episode.loadPage3(in:url:):Episode.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "document.nodes(matchingSelector: &quot;a&quot;).first { $0.textContent.contains(&quot;Download&quot;) }">
             </PersistentString>
          </PersistentStrings>
       </ContextState>

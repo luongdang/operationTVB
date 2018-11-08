@@ -6,107 +6,11 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "OperationTVB/Episode.swift"
-            timestampString = "550341911.775467"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "276"
-            endingLineNumber = "276"
-            landmarkName = "loadPage2(in:url:)"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  shouldBeEnabled = "No"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 () -&gt; () in closure #1 () -&gt; () in OperationTVB.Episode.(loadPage2 in _759F36A1A7B82A0D9BAEB402393D6314)(in: __ObjC.WKWebView, url: Foundation.URL) -&gt; ()"
-                  moduleName = "OperationTVB"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/powerbook/Developer/OperationTVB/OperationTVB/Episode.swift"
-                  timestampString = "550338907.698283"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "276"
-                  endingLineNumber = "276"
-                  offsetFromSymbolStart = "467">
-               </Location>
-               <Location
-                  shouldBeEnabled = "No"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 () -&gt; () in closure #1 () -&gt; () in closure #1 () -&gt; () in OperationTVB.Episode.(loadPage2 in _759F36A1A7B82A0D9BAEB402393D6314)(in: __ObjC.WKWebView, url: Foundation.URL) -&gt; ()"
-                  moduleName = "OperationTVB"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/powerbook/Developer/OperationTVB/OperationTVB/Episode.swift"
-                  timestampString = "550338907.702875"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "277"
-                  endingLineNumber = "277"
-                  offsetFromSymbolStart = "22">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "OperationTVB/Episode.swift"
-            timestampString = "550341911.775897"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "321"
-            endingLineNumber = "321"
-            landmarkName = "loadPage3(in:url:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "OperationTVB/Episode.swift"
-            timestampString = "550341911.776195"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "304"
-            endingLineNumber = "304"
-            landmarkName = "loadPage3(in:url:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "OperationTVB/ViewController.swift"
-            timestampString = "550382307.564503"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "228"
-            endingLineNumber = "228"
-            landmarkName = "download(_:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "OperationTVBTests/TestEpisode.swift"
-            timestampString = "550382307.5649149"
+            timestampString = "550456060.836069"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "37"

@@ -14,8 +14,8 @@ class TestEpisode: XCTestCase {
 		return NSStoryboard(name: "Main", bundle: nil).instantiateController(withIdentifier: "webViewWindowController") as! NSWindowController
 	}()
 	
-	lazy var webViewController: WebViewController = {
-		return windowController.contentViewController as! WebViewController
+	lazy var webViewController: DebugViewController = {
+		return windowController.contentViewController as! DebugViewController
 	}()
 		
     override func setUp() {

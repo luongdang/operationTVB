@@ -10,12 +10,12 @@ import Cocoa
 
 fileprivate struct Constants {
     /// Wait time before starting to download an episode
-	/// FIXME: Change back to 0.0 ..< 60.0
-    static let waitTime = 0.0 ..< 1.0
+	// FIXME: Change back to 0.0 ..< 60.0
+    static let waitTime = 0.0 ..< 60.0
     
     /// The maximum number of concurrent downloads
 	// FIXME: Change back to 20
-    static let concurrentDownloads = 1
+    static let concurrentDownloads = 2
 	
 	/// Default download location
 	static let defaultDownloadURL = URL(fileURLWithPath: "/Volumes/video/(BitTorrent)/OperationTVB")
@@ -38,9 +38,6 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 	
 	var appDelegate: AppDelegate {
 		return NSApp.delegate as! AppDelegate
-	}
-	var webViewController: WebViewController {
-		return appDelegate.webViewWindowController.contentViewController as! WebViewController
 	}
 	
 	@objc dynamic var episodes = [Episode]() {
@@ -306,6 +303,5 @@ extension ViewController: NSMenuDelegate {
 		{
 			NSWorkspace.shared.selectFile(episodeLocation.path, inFileViewerRootedAtPath: "")
 		}
-		
 	}
 }

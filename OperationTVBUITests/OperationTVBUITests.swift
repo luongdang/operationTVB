@@ -37,19 +37,27 @@ class OperationTVBUITests: XCTestCase {
 		let app = XCUIApplication()
 		app.launch()
 		
-		// Show WebView Debugger window
-		app.typeKey("d", modifierFlags: .command)
-		let debuggerWindow = app.windows["WebView Debugger"].firstMatch
-		XCTAssertTrue(debuggerWindow.exists)
-		
-		
 		// Show main window
 		let mainWindow = app.windows["Operation TVB"].firstMatch
 		let episodeURLField = mainWindow.textFields["episodeURLField"].firstMatch
 		episodeURLField.typeText("http://icdrama.se/hk-drama/3774-flying-tiger/")
 		
 		mainWindow.buttons["Add"].click()
-		sleep(2)
+		let downloading = mainWindow.staticTexts["Downloading episode list"].firstMatch
+		let predicate = NSPredicate(format: "exists == false")
+		expectation(for: predicate, evaluatedWith: downloading, handler: nil)
+		waitForExpectations(timeout: 5) { error in
+			guard error == nil else {
+				XCTFail(error!.localizedDescription)
+				return
+			}
+		}
+		mainWindow.buttons["Download"].firstMatch.click()
+		
+		// Show WebView Debugger window
+		app.typeKey("d", modifierFlags: .command)
+		let debuggerWindow = app.windows["WebView Debugger"].firstMatch
+		XCTAssertTrue(debuggerWindow.exists)
 	}
 	
 }

@@ -10,7 +10,11 @@ import Foundation
 import HTMLReader
 
 extension HTMLNode {
-	func firstNode(matchingSelector selectorString: String, withContent textContent: String) -> HTMLElement? {
-		return self.nodes(matchingSelector: selectorString).filter({ $0.textContent == textContent }).first
+	func firstNode(matchingSelector selector: String, withContent textContent: String) -> HTMLElement? {
+		return self.nodes(matchingSelector: selector).first { $0.textContent == textContent }
+	}
+	
+	func firstNode(matchingSelector selector: String, containingContent textContent: String) -> HTMLElement? {
+		return self.nodes(matchingSelector: selector).first { $0.textContent.contains(textContent) }
 	}
 }

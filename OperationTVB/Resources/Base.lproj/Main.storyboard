@@ -3,7 +3,6 @@
     <dependencies>
         <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14269.12"/>
-        <plugIn identifier="com.apple.WebKit2IBPlugin" version="14269.12"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -592,11 +591,6 @@
                                                 <action selector="toggleToolbarShown:" target="Ady-hI-5gd" id="BXY-wc-z0C"/>
                                             </connections>
                                         </menuItem>
-                                        <menuItem title="Show Webview" keyEquivalent="d" id="RhS-yd-SKn">
-                                            <connections>
-                                                <action selector="showWebViewWindow:" target="Voe-Tx-rLC" id="mfB-pT-qc7"/>
-                                            </connections>
-                                        </menuItem>
                                         <menuItem title="Customize Toolbar…" id="1UK-8n-QPP">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
@@ -739,81 +733,6 @@
             </objects>
             <point key="canvasLocation" x="75" y="-264"/>
         </scene>
-        <!--Web View Window Controller-->
-        <scene sceneID="waC-gS-BRd">
-            <objects>
-                <windowController storyboardIdentifier="webViewWindowController" id="eTQ-56-hui" userLabel="Web View Window Controller" sceneMemberID="viewController">
-                    <window key="window" title="WebView Debugger" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" tabbingMode="disallowed" id="Bvd-MI-rlv">
-                        <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
-                        <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-                        <rect key="contentRect" x="294" y="313" width="480" height="270"/>
-                        <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1057"/>
-                        <connections>
-                            <outlet property="delegate" destination="eTQ-56-hui" id="bkW-cC-TZL"/>
-                        </connections>
-                    </window>
-                    <connections>
-                        <segue destination="fqt-ol-YUh" kind="relationship" relationship="window.shadowedContentViewController" id="G8N-M7-KML"/>
-                    </connections>
-                </windowController>
-                <customObject id="pCh-Ov-57o" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="920" y="250"/>
-        </scene>
-        <!--WebView Controller-->
-        <scene sceneID="wsg-6n-L94">
-            <objects>
-                <viewController title="WebView Controller" storyboardIdentifier="webViewController" id="fqt-ol-YUh" customClass="WebViewController" customModule="OperationTVB" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" id="Jo4-Ix-Iqx">
-                        <rect key="frame" x="0.0" y="0.0" width="800" height="600"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                        <subviews>
-                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Rsu-Eg-MVM">
-                                <rect key="frame" x="18" y="561" width="34" height="17"/>
-                                <textFieldCell key="cell" lineBreakMode="clipping" title="URL:" id="UbR-aY-zGE">
-                                    <font key="font" usesAppearanceFont="YES"/>
-                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                </textFieldCell>
-                            </textField>
-                            <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="knO-oh-vff">
-                                <rect key="frame" x="58" y="558" width="722" height="22"/>
-                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" drawsBackground="YES" id="uXJ-MT-9Mt">
-                                    <font key="font" metaFont="system"/>
-                                    <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                </textFieldCell>
-                            </textField>
-                            <wkWebView wantsLayer="YES" translatesAutoresizingMaskIntoConstraints="NO" id="mwc-yG-XpY">
-                                <rect key="frame" x="20" y="20" width="760" height="530"/>
-                                <wkWebViewConfiguration key="configuration">
-                                    <audiovisualMediaTypes key="mediaTypesRequiringUserActionForPlayback" none="YES"/>
-                                    <wkPreferences key="preferences"/>
-                                </wkWebViewConfiguration>
-                                <string key="customUserAgent">"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.97 Safari/537.36 Vivaldi/1.9.818.49"</string>
-                            </wkWebView>
-                        </subviews>
-                        <constraints>
-                            <constraint firstItem="knO-oh-vff" firstAttribute="leading" secondItem="Rsu-Eg-MVM" secondAttribute="trailing" constant="8" id="6Jf-T8-ZyI"/>
-                            <constraint firstItem="mwc-yG-XpY" firstAttribute="leading" secondItem="Rsu-Eg-MVM" secondAttribute="leading" id="Bqy-uK-z5O"/>
-                            <constraint firstItem="Rsu-Eg-MVM" firstAttribute="firstBaseline" secondItem="knO-oh-vff" secondAttribute="firstBaseline" id="OMi-DD-9GY"/>
-                            <constraint firstItem="Rsu-Eg-MVM" firstAttribute="leading" secondItem="Jo4-Ix-Iqx" secondAttribute="leading" constant="20" id="TXu-zW-fLT"/>
-                            <constraint firstAttribute="bottom" secondItem="mwc-yG-XpY" secondAttribute="bottom" constant="20" id="dAo-mN-cG7"/>
-                            <constraint firstItem="knO-oh-vff" firstAttribute="top" secondItem="Jo4-Ix-Iqx" secondAttribute="top" constant="20" id="goO-fB-D54"/>
-                            <constraint firstAttribute="trailing" secondItem="knO-oh-vff" secondAttribute="trailing" constant="20" id="rgh-xg-lOG"/>
-                            <constraint firstAttribute="trailing" secondItem="mwc-yG-XpY" secondAttribute="trailing" constant="20" id="wiN-il-Xva"/>
-                            <constraint firstItem="mwc-yG-XpY" firstAttribute="top" secondItem="knO-oh-vff" secondAttribute="bottom" constant="8" id="wjt-mz-vl2"/>
-                        </constraints>
-                    </view>
-                    <connections>
-                        <outlet property="urlField" destination="knO-oh-vff" id="NgS-bD-HDI"/>
-                        <outlet property="webView" destination="mwc-yG-XpY" id="yzR-Pe-dGH"/>
-                    </connections>
-                </viewController>
-                <customObject id="xcr-sD-loX" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="920" y="821"/>
-        </scene>
         <!--Operation TVB-->
         <scene sceneID="hIz-AP-VOD">
             <objects>
@@ -824,7 +743,7 @@
                         <subviews>
                             <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="s1S-5i-ikJ">
                                 <rect key="frame" x="112" y="363" width="476" height="22"/>
-                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" title="http://icdrama.se/hk-drama/page-1.html?sort=date" drawsBackground="YES" usesSingleLineMode="YES" id="X0I-df-RVn">
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" title="http://icdrama.se/hk-drama/3774-flying-tiger/" drawsBackground="YES" usesSingleLineMode="YES" id="X0I-df-RVn">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>

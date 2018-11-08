@@ -54,7 +54,6 @@ fileprivate struct Constants {
 	var episodeAirDate: Date? {
 		return Constants.episodeDateFormatter.date(from: episode)
 	}
-	
 	var url: URL
 	
 	override var description: String {
@@ -118,7 +117,7 @@ fileprivate struct Constants {
 	}
 
 	
-	// MARK: - Ge
+	// MARK: - Get the list of episodes
 	
 	/// Retrieve the list of episode some from the Download page of a show
 	///
@@ -160,7 +159,13 @@ fileprivate struct Constants {
 			completionHandler(result)
 		}.resume()
 	}
-	
+
+	/// Retrieve the list of episode from an index page. An index page can contain multiple shows.
+	///
+	/// - Parameters:
+	///   - url: The URL of the index page
+	///   - progressHandler: The function to call when a new episode has been detected
+	///   - completionHandler: The function to call when the list of all episodes has been retrieved
 	class func downloadEpisodeList(fromIndexPage url: URL, progressHandler: @escaping ((Episode) -> Void?), completionHandler: @escaping ([Episode]) -> Void) {
 		let queue = DispatchQueue(label: "com.ldresearch.operationTVB.downloadEpisodeList.fromIndexPageURL", qos: .background, attributes: [])
 		let request = Utility.makeRequest(with: url)
@@ -178,8 +183,9 @@ fileprivate struct Constants {
 				var allEpisodes = [Episode]()
 				
 				for node in document.nodes(matchingSelector: "a.movie-image") {
-					guard let url = URL(string: node.attributes["href"]!) else {
-						print("Invalid href: '\(node.attributes["href"]!)'")
+					let href = node.attributes["href"]!
+					guard let url = URL(string: href) else {
+						print("Invalid href: '\(href)'")
 						continue
 					}
 					
@@ -206,6 +212,11 @@ fileprivate struct Constants {
 		loadPage1(in: Constants.webView)
 	}
 	
+	/// Open the episode's download page, which contains a list of download providers. The function
+	/// then selects the generated link to the Openload service.
+	///
+	/// The link to Openload on this page does not go directly to Openload. It needs to go through
+	/// a few redirects, which is handled in `loadPage2`.
 	private func loadPage1(in webView: WKWebView) {
 		let request = Utility.makeRequest(with: url)
 		
@@ -213,7 +224,7 @@ fileprivate struct Constants {
 		DispatchQueue.main.async {
 			webView.load(request)
 			
-			DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+			DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) {
 				webView.evaluateJavaScript("document.documentElement.outerHTML") { result, error in
 					defer { Constants.webViewSemaphore.signal() }
 					
@@ -228,14 +239,6 @@ fileprivate struct Constants {
 					}
 					
 					let document = HTMLDocument(string: htmlString)
-//					let picasaAnchor = document.firstNode(matchingSelector: "a", withContent: "Picasaweb 720p") ??
-//										document.firstNode(matchingSelector: "a", withContent: "Picasaweb 360p")
-//					if picasaAnchor == nil {
-//						let error = NSError(domain: Constants.errorDomain, code: 1, userInfo: [NSLocalizedDescriptionKey: "No Picasa link"])
-//						self.forward(error: error, whileLoadingURL: self.url)
-//						return
-//					}
-					
 					guard let openloadAnchor = document.firstNode(matchingSelector: "a", withContent: "Openload") else {
 						let error = NSError(domain: Constants.errorDomain, code: 1, userInfo: [NSLocalizedDescriptionKey: "No Openload link"])
 						self.forward(error: error, whileLoadingURL: self.url)
@@ -255,6 +258,7 @@ fileprivate struct Constants {
 		}
 	}
 	
+	/// Open the URL that redirects to the video viewer page on Openload
 	private func loadPage2(in webView: WKWebView, url: URL) {
 		let request = Utility.makeRequest(with: url)
 		
@@ -268,7 +272,7 @@ fileprivate struct Constants {
 				guard let openloadURL = webView.url, let components = URLComponents(url: openloadURL, resolvingAgainstBaseURL: true),
 					components.host == "openload.co" else
 				{
-					let error = self.makeError(message: "Did ot redirect to Openload")
+					let error = self.makeError(message: "Did not redirect to Openload")
 					self.forward(error: error, whileLoadingURL: url)
 					return
 				}
@@ -279,7 +283,9 @@ fileprivate struct Constants {
 			}
 		}
 	}
-		
+	
+	
+	/// Get the actual link to the Openload video usign the 9xbuddy website
 	private func loadPage3(in webView: WKWebView, url: URL) {
 		guard var components = URLComponents(string: "https://9xbuddy.com/process") else {
 			let error = self.makeError(message: "Cannot construct 9xbuddy link")
@@ -290,7 +296,6 @@ fileprivate struct Constants {
 		components.queryItems = [
 			URLQueryItem(name: "url", value: url.absoluteString)
 		]
-		print(components.url!)
 		
 		let request = Utility.makeRequest(with: components.url!)
 		Constants.webViewSemaphore.wait()
@@ -298,43 +303,38 @@ fileprivate struct Constants {
 			webView.load(request)
 			
 			DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) {
-				webView.evaluateJavaScript("document.getElementsByTagName('a')") { result, error in
+				webView.evaluateJavaScript("document.documentElement.outerHTML") { html, error in
 					defer { Constants.webViewSemaphore.signal() }
 					
 					guard error == nil else {
 						self.forward(error: error, whileLoadingURL: self.url)
 						return
 					}
-					guard let htmlString = result as? String else {
+					guard let html = html as? String else {
 						let error = NSError(domain: Constants.errorDomain, code: 1, userInfo: [NSLocalizedDescriptionKey: "Cannot extract HTML string"])
 						self.forward(error: error, whileLoadingURL: self.url)
 						return
 					}
 					
-					let document = HTMLDocument(string: htmlString)
-					
-					// FIXME: Remove this block
-					let outputURL = FileManager.default.urls(for: .desktopDirectory, in: .userDomainMask).first!.appendingPathComponent("document.html")
-					try! document.innerHTML.write(to: outputURL, atomically: true, encoding: .utf8)
-					//
-					
-					guard let downloadNowAnchor = document.firstNode(matchingSelector: "a", withContent: "Download Now"),
-						let href = downloadNowAnchor.attributes["href"],
+					let document = HTMLDocument(string: html)
+					guard let anchor = document.firstNode(matchingSelector: "a", containingContent: "Download Now"),
+						let href = anchor.attributes["href"],
 						let videoURL = URL(string: href) else
 					{
 						let error = self.makeError(message: "Cannot get link to Openload video")
 						self.forward(error: error, whileLoadingURL: url)
 						return
 					}
-					
+
 					DispatchQueue.global().async {
+						print(videoURL)
 						self.downloadVideo(url: videoURL)
 					}
 				}
 			}
 		}
 	}
-			
+	
 	private func downloadVideo(url: URL) {
 		let session = URLSession(configuration: .default, delegate: self.downloadDelegate, delegateQueue: nil)
 		let request = Utility.makeRequest(with: url)
